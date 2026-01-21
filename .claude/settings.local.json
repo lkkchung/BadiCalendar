@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(go install:*)",
+      "Bash(bd hooks install:*)",
+      "Bash(bd ready:*)",
+      "Bash(gh repo create:*)"
+    ]
+  }
+}
