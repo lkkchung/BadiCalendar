@@ -11,7 +11,8 @@
       "Bash(bd stats:*)",
       "Bash(bd create:*)",
       "Bash(bd init:*)",
-      "Bash(bd doctor:*)"
+      "Bash(bd doctor:*)",
+      "Bash(npm install:*)"
     ]
   }
 }
