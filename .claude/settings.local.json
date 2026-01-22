@@ -5,7 +5,13 @@
       "Bash(go install:*)",
       "Bash(bd hooks install:*)",
       "Bash(bd ready:*)",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "Bash(bd onboard:*)",
+      "Bash(bd list:*)",
+      "Bash(bd stats:*)",
+      "Bash(bd create:*)",
+      "Bash(bd init:*)",
+      "Bash(bd doctor:*)"
     ]
   }
 }
