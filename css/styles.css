@@ -1,0 +1,243 @@
+/* Badí' Calendar Styles */
+/* Functional design - Arial only, 3 font sizes */
+
+:root {
+    --color-primary: #6b4c9a;
+    --color-background: #f5f5f5;
+    --color-surface: #ffffff;
+    --color-text: #333333;
+    --color-text-muted: #666666;
+    --color-border: #dddddd;
+    --font-stack: Arial, sans-serif;
+    --font-size-heading: 1.5rem;
+    --font-size-body: 1rem;
+    --font-size-small: 0.875rem;
+}
+
+/* Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-stack);
+    font-size: var(--font-size-body);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* Layout */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.header {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.app-title {
+    font-size: var(--font-size-heading);
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Date Section */
+.date-section {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.date-display {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.weekday {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.day {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.month {
+    font-size: var(--font-size-heading);
+}
+
+.year {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+}
+
+/* Time Section */
+.time-section {
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.current-time {
+    font-size: var(--font-size-body);
+    color: var(--color-text-muted);
+}
+
+/* Countdown Section */
+.countdown-section {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.section-title {
+    font-size: var(--font-size-small);
+    font-weight: bold;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+}
+
+.countdown-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.countdown-label {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+}
+
+.countdown-separator {
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+    padding-bottom: 1rem;
+}
+
+.sunset-time {
+    margin-top: 1rem;
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+}
+
+/* Location Section */
+.location-section {
+    background: var(--color-surface);
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+}
+
+.location-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.location-icon::before {
+    content: '\2316';
+}
+
+.location-text {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+}
+
+.location-fallback {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.location-label {
+    display: block;
+    font-size: var(--font-size-small);
+    margin-bottom: 0.5rem;
+}
+
+.location-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.location-input {
+    flex: 1;
+    padding: 0.5rem;
+    font-family: inherit;
+    font-size: var(--font-size-body);
+    border: 1px solid var(--color-border);
+}
+
+.location-input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+.location-button {
+    padding: 0.5rem 1rem;
+    font-family: inherit;
+    font-size: var(--font-size-small);
+    font-weight: bold;
+    color: white;
+    background: var(--color-primary);
+    border: none;
+    cursor: pointer;
+}
+
+.location-button:hover {
+    opacity: 0.9;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    margin-top: auto;
+}
+
+.footer-text {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+}
+
+/* Utility */
+[hidden] {
+    display: none !important;
+}

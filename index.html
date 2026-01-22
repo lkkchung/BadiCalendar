@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Badí' Calendar - Display the current Bahá'í date with sunset countdown">
+    <title>Badí' Calendar</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1 class="app-title">Badí' Calendar</h1>
+        </header>
+
+        <main class="main-content">
+            <!-- Current Badí' Date Display -->
+            <section class="date-section" aria-label="Current Badí' Date">
+                <div class="date-display">
+                    <div class="weekday" id="weekday">--</div>
+                    <div class="day" id="day">--</div>
+                    <div class="month" id="month">--</div>
+                    <div class="year" id="year">--</div>
+                </div>
+            </section>
+
+            <!-- Current Time Display -->
+            <section class="time-section" aria-label="Current Time">
+                <div class="time-display">
+                    <span class="current-time" id="current-time">--:--:--</span>
+                </div>
+            </section>
+
+            <!-- Sunset Countdown -->
+            <section class="countdown-section" aria-label="Sunset Countdown">
+                <h2 class="section-title">Next Sunset</h2>
+                <div class="countdown-display">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="countdown-hours">--</span>
+                        <span class="countdown-label">Hours</span>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="countdown-minutes">--</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="countdown-seconds">--</span>
+                        <span class="countdown-label">Seconds</span>
+                    </div>
+                </div>
+                <div class="sunset-time" id="sunset-time">Sunset at --:--</div>
+            </section>
+
+            <!-- Location Section -->
+            <section class="location-section" aria-label="Location Settings">
+                <div class="location-display">
+                    <span class="location-icon" aria-hidden="true"></span>
+                    <span class="location-text" id="location-text">Detecting location...</span>
+                </div>
+                <div class="location-fallback" id="location-fallback" hidden>
+                    <label for="location-input" class="location-label">Enter your city:</label>
+                    <div class="location-input-group">
+                        <input
+                            type="text"
+                            id="location-input"
+                            class="location-input"
+                            placeholder="e.g., London, UK"
+                            autocomplete="off"
+                        >
+                        <button type="button" id="location-submit" class="location-button">
+                            Set Location
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p class="footer-text">
+                Badí' Calendar &copy; <span id="footer-year"></span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>
