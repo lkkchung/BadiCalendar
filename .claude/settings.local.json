@@ -12,7 +12,13 @@
       "Bash(bd create:*)",
       "Bash(bd init:*)",
       "Bash(bd doctor:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(bd dep add:*)",
+      "Bash(bd close:*)",
+      "Bash(bd show:*)",
+      "Bash(bd sync:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }
