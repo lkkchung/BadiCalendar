@@ -1,0 +1,11 @@
+# bv (beads viewer) local config and caches
+.bv/
+
+# Local Claude settings
+.claude/settings.local.json
+
+# Windows artifacts
+nul
+
+# Beads local database (broken on Windows currently)
+.beads/
