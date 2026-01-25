@@ -1,5 +1,6 @@
 // Badí' Calendar Application
 import { getCurrentBadiDate } from './badiDate.js';
+import { getNextSunset, formatTime } from './suncalc.js';
 
 /**
  * Geolocation module - handles browser geolocation API integration
@@ -326,6 +327,78 @@ const Geolocation = {
 export { Geolocation };
 
 /**
+ * Sunset module - handles sunset time calculation and display
+ */
+const Sunset = {
+    // Current sunset time
+    nextSunset: null,
+
+    // DOM elements
+    elements: {
+        sunsetTime: null
+    },
+
+    /**
+     * Initialize sunset module
+     */
+    init() {
+        this.elements.sunsetTime = document.getElementById('sunset-time');
+
+        // Listen for location changes
+        window.addEventListener('locationChanged', (e) => {
+            this.updateSunset(e.detail);
+        });
+
+        // If location already available, calculate sunset
+        const location = Geolocation.getLocation();
+        if (location) {
+            this.updateSunset(location);
+        }
+    },
+
+    /**
+     * Update sunset calculation for a location
+     * @param {Object} location - { latitude, longitude }
+     */
+    updateSunset(location) {
+        if (!location || location.latitude === undefined || location.longitude === undefined) {
+            return;
+        }
+
+        this.nextSunset = getNextSunset(location.latitude, location.longitude);
+        this.updateDisplay();
+
+        // Dispatch event for countdown timer
+        window.dispatchEvent(new CustomEvent('sunsetUpdated', {
+            detail: { sunset: this.nextSunset }
+        }));
+    },
+
+    /**
+     * Update the sunset time display
+     */
+    updateDisplay() {
+        if (!this.elements.sunsetTime) return;
+
+        if (this.nextSunset) {
+            this.elements.sunsetTime.textContent = `Sunset at ${formatTime(this.nextSunset)}`;
+        } else {
+            this.elements.sunsetTime.textContent = 'Sunset time unavailable';
+        }
+    },
+
+    /**
+     * Get the next sunset time
+     * @returns {Date|null}
+     */
+    getNextSunset() {
+        return this.nextSunset;
+    }
+};
+
+export { Sunset };
+
+/**
  * Update the Bahá'í date display
  */
 function updateBadiDateDisplay() {
@@ -361,6 +434,25 @@ function updateBadiDateDisplay() {
 }
 
 /**
+ * Update the Gregorian date display
+ */
+function updateGregorianDateDisplay() {
+    const gregorianDateEl = document.getElementById('gregorian-date');
+    if (!gregorianDateEl) return;
+
+    const now = new Date();
+    const options = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    };
+
+    // Use locale-aware formatting
+    gregorianDateEl.textContent = now.toLocaleDateString(undefined, options);
+}
+
+/**
  * Update the footer year
  */
 function updateFooterYear() {
@@ -375,7 +467,9 @@ function updateFooterYear() {
  */
 function init() {
     Geolocation.init();
+    Sunset.init();
     updateBadiDateDisplay();
+    updateGregorianDateDisplay();
     updateFooterYear();
 }
 
