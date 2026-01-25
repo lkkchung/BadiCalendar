@@ -104,6 +104,12 @@ body {
     color: var(--color-text-muted);
 }
 
+.gregorian-date {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+}
+
 /* Countdown Section */
 .countdown-section {
     background: var(--color-surface);
