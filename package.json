@@ -1,1 +1,6 @@
-{}
+{
+  "name": "badi-calendar",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Badí' Calendar - Display the current Bahá'í date with sunset countdown"
+}
