@@ -333,6 +333,9 @@ const Sunset = {
     // Current sunset time
     nextSunset: null,
 
+    // Current location (cached for recalculation)
+    currentLocation: null,
+
     // DOM elements
     elements: {
         sunsetTime: null
@@ -346,14 +349,37 @@ const Sunset = {
 
         // Listen for location changes
         window.addEventListener('locationChanged', (e) => {
+            this.currentLocation = e.detail;
             this.updateSunset(e.detail);
+        });
+
+        // Listen for sunset passed - recalculate next sunset
+        window.addEventListener('sunsetPassed', () => {
+            this.onSunsetPassed();
         });
 
         // If location already available, calculate sunset
         const location = Geolocation.getLocation();
         if (location) {
+            this.currentLocation = location;
             this.updateSunset(location);
         }
+    },
+
+    /**
+     * Handle sunset passed event
+     */
+    onSunsetPassed() {
+        // Recalculate next sunset
+        if (this.currentLocation) {
+            // Small delay to ensure we're past the sunset moment
+            setTimeout(() => {
+                this.updateSunset(this.currentLocation);
+            }, 1000);
+        }
+
+        // Dispatch event for Bahá'í date update
+        window.dispatchEvent(new CustomEvent('badiDayChanged'));
     },
 
     /**
@@ -397,6 +423,118 @@ const Sunset = {
 };
 
 export { Sunset };
+
+/**
+ * Countdown module - handles countdown timer to next sunset
+ */
+const Countdown = {
+    // Target sunset time
+    targetSunset: null,
+
+    // Interval ID for the timer
+    intervalId: null,
+
+    // DOM elements
+    elements: {
+        hours: null,
+        minutes: null,
+        seconds: null
+    },
+
+    /**
+     * Initialize countdown module
+     */
+    init() {
+        this.elements.hours = document.getElementById('countdown-hours');
+        this.elements.minutes = document.getElementById('countdown-minutes');
+        this.elements.seconds = document.getElementById('countdown-seconds');
+
+        // Listen for sunset updates
+        window.addEventListener('sunsetUpdated', (e) => {
+            this.setTarget(e.detail.sunset);
+        });
+
+        // Check if sunset already available
+        const sunset = Sunset.getNextSunset();
+        if (sunset) {
+            this.setTarget(sunset);
+        }
+    },
+
+    /**
+     * Set the countdown target
+     * @param {Date} sunset
+     */
+    setTarget(sunset) {
+        this.targetSunset = sunset;
+
+        // Clear existing interval
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
+
+        // Update immediately and start interval
+        this.update();
+        this.intervalId = setInterval(() => this.update(), 1000);
+    },
+
+    /**
+     * Update the countdown display
+     */
+    update() {
+        if (!this.targetSunset) {
+            this.displayTime(0, 0, 0);
+            return;
+        }
+
+        const now = new Date();
+        const diff = this.targetSunset.getTime() - now.getTime();
+
+        if (diff <= 0) {
+            // Sunset has passed - request new sunset calculation
+            this.displayTime(0, 0, 0);
+            window.dispatchEvent(new CustomEvent('sunsetPassed'));
+            return;
+        }
+
+        const totalSeconds = Math.floor(diff / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        this.displayTime(hours, minutes, seconds);
+    },
+
+    /**
+     * Display time values in the UI
+     * @param {number} hours
+     * @param {number} minutes
+     * @param {number} seconds
+     */
+    displayTime(hours, minutes, seconds) {
+        if (this.elements.hours) {
+            this.elements.hours.textContent = String(hours).padStart(2, '0');
+        }
+        if (this.elements.minutes) {
+            this.elements.minutes.textContent = String(minutes).padStart(2, '0');
+        }
+        if (this.elements.seconds) {
+            this.elements.seconds.textContent = String(seconds).padStart(2, '0');
+        }
+    },
+
+    /**
+     * Stop the countdown
+     */
+    stop() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+};
+
+export { Countdown };
 
 /**
  * Update the Bahá'í date display
@@ -468,9 +606,15 @@ function updateFooterYear() {
 function init() {
     Geolocation.init();
     Sunset.init();
+    Countdown.init();
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
     updateFooterYear();
+
+    // Listen for Bahá'í day change (at sunset)
+    window.addEventListener('badiDayChanged', () => {
+        updateBadiDateDisplay();
+    });
 }
 
 // Run when DOM is ready
