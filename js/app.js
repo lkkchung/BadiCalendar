@@ -25,6 +25,9 @@ const Geolocation = {
         this.elements.locationInput = document.getElementById('location-input');
         this.elements.locationSubmit = document.getElementById('location-submit');
 
+        // Set up fallback input event listeners
+        this.setupFallbackInputListeners();
+
         // Try to load saved location from localStorage
         const savedLocation = this.loadSavedLocation();
         if (savedLocation) {
@@ -33,6 +36,157 @@ const Geolocation = {
         } else {
             this.requestLocation();
         }
+    },
+
+    /**
+     * Set up event listeners for fallback location input
+     */
+    setupFallbackInputListeners() {
+        if (this.elements.locationSubmit) {
+            this.elements.locationSubmit.addEventListener('click', () => {
+                this.handleManualLocationSubmit();
+            });
+        }
+
+        if (this.elements.locationInput) {
+            this.elements.locationInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.handleManualLocationSubmit();
+                }
+            });
+        }
+    },
+
+    /**
+     * Handle manual location submission from fallback input
+     */
+    handleManualLocationSubmit() {
+        const input = this.elements.locationInput.value.trim();
+        if (!input) return;
+
+        // Try to parse as coordinates (lat, lng) or (lat lng)
+        const coordMatch = input.match(/^(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)$/);
+        if (coordMatch) {
+            const lat = parseFloat(coordMatch[1]);
+            const lng = parseFloat(coordMatch[2]);
+            if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                this.setManualLocation(lat, lng, null);
+                return;
+            }
+        }
+
+        // Look up city in predefined list
+        const cityLocation = this.lookupCity(input);
+        if (cityLocation) {
+            this.setManualLocation(cityLocation.lat, cityLocation.lng, cityLocation.name);
+            return;
+        }
+
+        // City not found - show error
+        this.elements.locationText.textContent = `City "${input}" not found. Try coordinates (lat, lng).`;
+    },
+
+    /**
+     * Set location from manual input
+     * @param {number} lat
+     * @param {number} lng
+     * @param {string|null} name
+     */
+    setManualLocation(lat, lng, name) {
+        this.location = {
+            latitude: lat,
+            longitude: lng,
+            name: name,
+            source: 'manual'
+        };
+
+        this.saveLocation(this.location);
+        this.updateLocationDisplay();
+        this.hideFallbackInput();
+        this.elements.locationInput.value = '';
+
+        // Dispatch event for other modules
+        window.dispatchEvent(new CustomEvent('locationChanged', {
+            detail: this.location
+        }));
+    },
+
+    /**
+     * Look up city coordinates from predefined list
+     * @param {string} query
+     * @returns {Object|null}
+     */
+    lookupCity(query) {
+        const cities = {
+            'london': { lat: 51.51, lng: -0.13, name: 'London, UK' },
+            'london uk': { lat: 51.51, lng: -0.13, name: 'London, UK' },
+            'new york': { lat: 40.71, lng: -74.01, name: 'New York, USA' },
+            'new york city': { lat: 40.71, lng: -74.01, name: 'New York, USA' },
+            'nyc': { lat: 40.71, lng: -74.01, name: 'New York, USA' },
+            'los angeles': { lat: 34.05, lng: -118.24, name: 'Los Angeles, USA' },
+            'la': { lat: 34.05, lng: -118.24, name: 'Los Angeles, USA' },
+            'chicago': { lat: 41.88, lng: -87.63, name: 'Chicago, USA' },
+            'toronto': { lat: 43.65, lng: -79.38, name: 'Toronto, Canada' },
+            'vancouver': { lat: 49.28, lng: -123.12, name: 'Vancouver, Canada' },
+            'sydney': { lat: -33.87, lng: 151.21, name: 'Sydney, Australia' },
+            'melbourne': { lat: -37.81, lng: 144.96, name: 'Melbourne, Australia' },
+            'paris': { lat: 48.86, lng: 2.35, name: 'Paris, France' },
+            'berlin': { lat: 52.52, lng: 13.41, name: 'Berlin, Germany' },
+            'tokyo': { lat: 35.68, lng: 139.69, name: 'Tokyo, Japan' },
+            'beijing': { lat: 39.90, lng: 116.41, name: 'Beijing, China' },
+            'shanghai': { lat: 31.23, lng: 121.47, name: 'Shanghai, China' },
+            'hong kong': { lat: 22.32, lng: 114.17, name: 'Hong Kong' },
+            'singapore': { lat: 1.35, lng: 103.82, name: 'Singapore' },
+            'mumbai': { lat: 19.08, lng: 72.88, name: 'Mumbai, India' },
+            'delhi': { lat: 28.61, lng: 77.21, name: 'Delhi, India' },
+            'dubai': { lat: 25.20, lng: 55.27, name: 'Dubai, UAE' },
+            'cairo': { lat: 30.04, lng: 31.24, name: 'Cairo, Egypt' },
+            'haifa': { lat: 32.79, lng: 34.99, name: 'Haifa, Israel' },
+            'tehran': { lat: 35.69, lng: 51.39, name: 'Tehran, Iran' },
+            'san francisco': { lat: 37.77, lng: -122.42, name: 'San Francisco, USA' },
+            'sf': { lat: 37.77, lng: -122.42, name: 'San Francisco, USA' },
+            'seattle': { lat: 47.61, lng: -122.33, name: 'Seattle, USA' },
+            'boston': { lat: 42.36, lng: -71.06, name: 'Boston, USA' },
+            'miami': { lat: 25.76, lng: -80.19, name: 'Miami, USA' },
+            'houston': { lat: 29.76, lng: -95.37, name: 'Houston, USA' },
+            'phoenix': { lat: 33.45, lng: -112.07, name: 'Phoenix, USA' },
+            'atlanta': { lat: 33.75, lng: -84.39, name: 'Atlanta, USA' },
+            'denver': { lat: 39.74, lng: -104.99, name: 'Denver, USA' },
+            'mexico city': { lat: 19.43, lng: -99.13, name: 'Mexico City, Mexico' },
+            'sao paulo': { lat: -23.55, lng: -46.63, name: 'São Paulo, Brazil' },
+            'rio de janeiro': { lat: -22.91, lng: -43.17, name: 'Rio de Janeiro, Brazil' },
+            'buenos aires': { lat: -34.60, lng: -58.38, name: 'Buenos Aires, Argentina' },
+            'johannesburg': { lat: -26.20, lng: 28.05, name: 'Johannesburg, South Africa' },
+            'cape town': { lat: -33.93, lng: 18.42, name: 'Cape Town, South Africa' },
+            'lagos': { lat: 6.52, lng: 3.38, name: 'Lagos, Nigeria' },
+            'nairobi': { lat: -1.29, lng: 36.82, name: 'Nairobi, Kenya' },
+            'moscow': { lat: 55.76, lng: 37.62, name: 'Moscow, Russia' },
+            'istanbul': { lat: 41.01, lng: 28.98, name: 'Istanbul, Turkey' },
+            'rome': { lat: 41.90, lng: 12.50, name: 'Rome, Italy' },
+            'madrid': { lat: 40.42, lng: -3.70, name: 'Madrid, Spain' },
+            'amsterdam': { lat: 52.37, lng: 4.90, name: 'Amsterdam, Netherlands' },
+            'brussels': { lat: 50.85, lng: 4.35, name: 'Brussels, Belgium' },
+            'vienna': { lat: 48.21, lng: 16.37, name: 'Vienna, Austria' },
+            'zurich': { lat: 47.37, lng: 8.54, name: 'Zurich, Switzerland' },
+            'stockholm': { lat: 59.33, lng: 18.07, name: 'Stockholm, Sweden' },
+            'oslo': { lat: 59.91, lng: 10.75, name: 'Oslo, Norway' },
+            'copenhagen': { lat: 55.68, lng: 12.57, name: 'Copenhagen, Denmark' },
+            'helsinki': { lat: 60.17, lng: 24.94, name: 'Helsinki, Finland' },
+            'dublin': { lat: 53.35, lng: -6.26, name: 'Dublin, Ireland' },
+            'edinburgh': { lat: 55.95, lng: -3.19, name: 'Edinburgh, UK' },
+            'manchester': { lat: 53.48, lng: -2.24, name: 'Manchester, UK' },
+            'birmingham': { lat: 52.49, lng: -1.90, name: 'Birmingham, UK' },
+            'seoul': { lat: 37.57, lng: 126.98, name: 'Seoul, South Korea' },
+            'bangkok': { lat: 13.76, lng: 100.50, name: 'Bangkok, Thailand' },
+            'kuala lumpur': { lat: 3.14, lng: 101.69, name: 'Kuala Lumpur, Malaysia' },
+            'jakarta': { lat: -6.21, lng: 106.85, name: 'Jakarta, Indonesia' },
+            'manila': { lat: 14.60, lng: 120.98, name: 'Manila, Philippines' },
+            'auckland': { lat: -36.85, lng: 174.76, name: 'Auckland, New Zealand' },
+            'wellington': { lat: -41.29, lng: 174.78, name: 'Wellington, New Zealand' }
+        };
+
+        const normalized = query.toLowerCase().trim();
+        return cities[normalized] || null;
     },
 
     /**
