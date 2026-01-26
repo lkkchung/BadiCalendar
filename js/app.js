@@ -596,6 +596,30 @@ function updateGregorianDateDisplay() {
 }
 
 /**
+ * Update the current time display with locale-aware formatting
+ */
+function updateTimeDisplay() {
+    const timeEl = document.getElementById('current-time');
+    if (!timeEl) return;
+
+    const now = new Date();
+    // Use locale-aware formatting with hours, minutes, seconds
+    timeEl.textContent = now.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
+/**
+ * Start the auto-updating time display (updates every second)
+ */
+function startTimeUpdater() {
+    updateTimeDisplay();
+    setInterval(updateTimeDisplay, 1000);
+}
+
+/**
  * Update the footer year
  */
 function updateFooterYear() {
@@ -614,6 +638,7 @@ function init() {
     Countdown.init();
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
+    startTimeUpdater();
     updateFooterYear();
 
     // Listen for Bahá'í day change (at sunset)
