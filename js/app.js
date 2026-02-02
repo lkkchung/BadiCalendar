@@ -545,7 +545,25 @@ export { Countdown };
  * Update the Bahá'í date display
  */
 function updateBadiDateDisplay() {
-    const badiDate = getCurrentBadiDate();
+    // Determine correct Gregorian date for Bahá'í calculation
+    const gregorianDate = new Date();
+    const nextSunset = Sunset.getNextSunset();
+
+    // If nextSunset is tomorrow, we've passed today's sunset
+    // Use tomorrow's Gregorian date for Bahá'í calculation
+    if (nextSunset) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const sunsetDay = new Date(nextSunset);
+        sunsetDay.setHours(0, 0, 0, 0);
+
+        // Sunset is tomorrow → increment date by 1 day
+        if (sunsetDay > today) {
+            gregorianDate.setDate(gregorianDate.getDate() + 1);
+        }
+    }
+
+    const badiDate = getCurrentBadiDate(gregorianDate);
 
     const weekdayEl = document.getElementById('weekday');
     const dayEl = document.getElementById('day');

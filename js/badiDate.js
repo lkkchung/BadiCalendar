@@ -242,10 +242,11 @@ function formatBadiDate(badiDate, format = 'full') {
 
 /**
  * Get the current Bahá'í date
+ * @param {Date} gregorianDate - Optional Gregorian date (defaults to current date)
  * @returns {Object} - Current Bahá'í date object
  */
-function getCurrentBadiDate() {
-    return gregorianToBadi(new Date());
+function getCurrentBadiDate(gregorianDate = new Date()) {
+    return gregorianToBadi(gregorianDate);
 }
 
 // Export functions and data
