@@ -18,7 +18,18 @@
       "Bash(bd show:*)",
       "Bash(bd sync:*)",
       "Bash(git commit:*)",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(bd update:*)",
+      "Bash(node --input-type=module -e:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(npx serve:*)",
+      "Bash(curl:*)",
+      "Bash(ipconfig:*)",
+      "Bash(start index.html)",
+      "Bash(wc:*)",
+      "Bash(bd blocked:*)",
+      "Bash(bd hooks:*)"
     ]
   }
 }
