@@ -2,10 +2,10 @@
 /* Functional design - Arial only, 3 font sizes */
 
 :root {
-    --color-primary: #6b4c9a;
+    --color-primary: #000000;
     --color-background: #f5f5f5;
     --color-surface: #ffffff;
-    --color-text: #333333;
+    --color-text: #1a1a1a;
     --color-text-muted: #666666;
     --color-border: #dddddd;
     --font-stack: Arial, sans-serif;
