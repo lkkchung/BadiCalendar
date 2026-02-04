@@ -5,12 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Badí' Calendar - Display the current Bahá'í date with sunset countdown">
     <title>Badí' Calendar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="app-container">
         <header class="header">
             <h1 class="app-title">Badí' Calendar</h1>
+            <div class="language-toggle" role="group" aria-label="Language selection">
+                <label class="language-toggle-label">
+                    <span class="language-option" data-lang="arabic">عربي</span>
+                    <input
+                        type="checkbox"
+                        id="language-toggle-input"
+                        class="language-toggle-input"
+                        aria-label="Toggle between Arabic and English"
+                    >
+                    <span class="language-toggle-slider"></span>
+                    <span class="language-option" data-lang="english">English</span>
+                </label>
+            </div>
         </header>
 
         <main class="main-content">

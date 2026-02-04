@@ -12,6 +12,16 @@
     --font-size-heading: 1.5rem;
     --font-size-body: 1rem;
     --font-size-small: 0.875rem;
+
+    /* Typography tokens */
+    --property-font: 'Montserrat', sans-serif;
+    --property-font-weight: 300;
+    --value-font: 'Times New Roman', serif;
+    --label-letter-spacing: 2.88px;
+    --value-letter-spacing: 4.4px;
+    --font-feature-lnum: 'lnum' 1;
+    --font-feature-pnum: 'pnum' 1;
+    --font-feature-onum: 'onum' 1;
 }
 
 /* Reset */
@@ -229,6 +239,81 @@ body {
 
 .location-button:hover {
     opacity: 0.9;
+}
+
+/* Language Toggle */
+.language-toggle {
+    margin-top: 1rem;
+}
+
+.language-toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.language-option {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+}
+
+.language-option[data-lang="arabic"] {
+    order: 1;
+}
+
+.language-toggle-input {
+    order: 2;
+    position: relative;
+    appearance: none;
+    width: 44px;
+    height: 24px;
+    background: var(--color-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.language-toggle-input:checked {
+    background: var(--color-primary);
+}
+
+.language-toggle-slider {
+    order: 2;
+    position: absolute;
+    width: 44px;
+    height: 24px;
+    pointer-events: none;
+}
+
+.language-toggle-slider::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.language-toggle-input:checked + .language-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.language-option[data-lang="english"] {
+    order: 3;
+}
+
+/* Highlight active language */
+.language-toggle-input:not(:checked) ~ .language-option[data-lang="arabic"],
+.language-toggle-input:checked ~ .language-option[data-lang="english"] {
+    color: var(--color-primary);
+    font-weight: bold;
 }
 
 /* Footer */
