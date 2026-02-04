@@ -6,11 +6,14 @@ import { getNextSunset, formatTime } from './suncalc.js';
  * Debug Time module - allows manual time/date override for testing
  */
 const DebugTime = {
-    // Override date (null = use real time)
-    debugDate: null,
+    // Time offset in milliseconds (null = use real time)
+    debugOffset: null,
 
     // Visual indicator element
     indicatorElement: null,
+
+    // Indicator update interval
+    indicatorInterval: null,
 
     /**
      * Initialize debug mode from URL parameters
@@ -32,8 +35,8 @@ const DebugTime = {
         window.advanceTime = (minutes) => this.advanceTime(minutes);
 
         console.log('Debug mode available:');
-        console.log('  debugTime("2024-03-20 18:00:00") - Set custom date/time');
-        console.log('  advanceTime(30) - Advance debug time by N minutes');
+        console.log('  debugTime("2024-03-20 18:00:00") - Set custom date/time (ticks forward)');
+        console.log('  advanceTime(30) - Jump forward/backward by N minutes');
         console.log('  clearDebugTime() - Return to real time');
     },
 
@@ -42,7 +45,10 @@ const DebugTime = {
      * @returns {Date}
      */
     now() {
-        return this.debugDate ? new Date(this.debugDate) : new Date();
+        if (this.debugOffset === null) {
+            return new Date();
+        }
+        return new Date(Date.now() + this.debugOffset);
     },
 
     /**
@@ -55,9 +61,10 @@ const DebugTime = {
             return;
         }
 
-        this.debugDate = date;
+        // Calculate offset from current real time
+        this.debugOffset = date.getTime() - Date.now();
         this.showIndicator();
-        console.log('Debug time set to:', date.toString());
+        console.log('Debug time set to:', date.toString(), '(time will tick forward)');
 
         // Trigger updates
         this.triggerUpdates();
@@ -67,7 +74,7 @@ const DebugTime = {
      * Clear debug time (return to real time)
      */
     clearDebugTime() {
-        this.debugDate = null;
+        this.debugOffset = null;
         this.hideIndicator();
         console.log('Debug time cleared - using real time');
 
@@ -80,14 +87,14 @@ const DebugTime = {
      * @param {number} minutes - Number of minutes to advance (can be negative)
      */
     advanceTime(minutes) {
-        if (!this.debugDate) {
+        if (this.debugOffset === null) {
             console.error('Debug mode not active. Call debugTime() first.');
             return;
         }
 
-        this.debugDate.setMinutes(this.debugDate.getMinutes() + minutes);
-        console.log('Advanced to:', this.debugDate.toString());
-        this.showIndicator();
+        // Adjust offset by the specified minutes
+        this.debugOffset += minutes * 60 * 1000;
+        console.log('Advanced by', minutes, 'minutes to:', this.now().toString());
         this.triggerUpdates();
     },
 
@@ -136,8 +143,24 @@ const DebugTime = {
             document.body.appendChild(this.indicatorElement);
         }
 
-        this.indicatorElement.textContent = `🐛 DEBUG: ${this.debugDate.toLocaleString()}`;
+        // Update indicator text
+        this.updateIndicator();
+
+        // Start updating the indicator every second
+        if (!this.indicatorInterval) {
+            this.indicatorInterval = setInterval(() => this.updateIndicator(), 1000);
+        }
+
         this.indicatorElement.style.display = 'block';
+    },
+
+    /**
+     * Update indicator text
+     */
+    updateIndicator() {
+        if (this.indicatorElement && this.debugOffset !== null) {
+            this.indicatorElement.textContent = `🐛 DEBUG: ${this.now().toLocaleString()}`;
+        }
     },
 
     /**
@@ -146,6 +169,12 @@ const DebugTime = {
     hideIndicator() {
         if (this.indicatorElement) {
             this.indicatorElement.style.display = 'none';
+        }
+
+        // Stop updating the indicator
+        if (this.indicatorInterval) {
+            clearInterval(this.indicatorInterval);
+            this.indicatorInterval = null;
         }
     }
 };

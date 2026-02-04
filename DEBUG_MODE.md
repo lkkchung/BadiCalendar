@@ -12,7 +12,7 @@ Open the browser console (F12) and use these commands:
 debugTime("2024-03-20 18:00:00")
 ```
 
-This freezes time at the specified moment. All time-dependent features (countdown, date displays, sunset calculations) will use this time.
+This sets the current time to the specified moment, and time continues to tick forward from there. All time-dependent features (countdown, date displays, sunset calculations) will use this debug time.
 
 ### Advance time by minutes
 
@@ -56,8 +56,13 @@ Click the indicator to exit debug mode.
 
 ## Technical Details
 
-Debug mode works by overriding all `new Date()` calls in the application with a custom `DebugTime.now()` function that returns either:
-- The debug date (when active)
-- The real current date (when inactive)
+Debug mode works by calculating a time offset from the real current time:
+- When you set debug time, it calculates: `offset = debugTime - realTime`
+- `DebugTime.now()` returns: `realTime + offset`
+- Time continues to tick forward naturally, just offset by the specified amount
+- `advanceTime()` adjusts the offset to jump forward or backward
 
-This ensures all time-dependent features use the same time source.
+This approach ensures:
+- All time-dependent features use the same time source
+- Countdowns and animations work naturally
+- You can test time-based transitions smoothly
