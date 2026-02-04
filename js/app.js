@@ -869,24 +869,54 @@ const ProgressDots = {
         }
 
         const periodInfo = getCurrentDayInPeriod(gregorianDate);
-        const { dayInPeriod, totalDaysInPeriod } = periodInfo;
+        const { dayInPeriod, totalDaysInPeriod, isAyyamIHa, month } = periodInfo;
 
         // Clear existing dots
         this.elements.container.innerHTML = '';
 
-        // Create dots
-        for (let i = 1; i <= totalDaysInPeriod; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'progress-dot';
+        // Special case: Month 18 shows calendar progression
+        if (month === 18 && !isAyyamIHa) {
+            // Show 18 days + Ayyám-i-Há indicator + Month 19 indicator
+            for (let i = 1; i <= 18; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
 
-            if (i === dayInPeriod) {
-                dot.classList.add('progress-dot-current');
-            } else if (i < dayInPeriod) {
-                dot.classList.add('progress-dot-past');
+                if (i === dayInPeriod) {
+                    dot.classList.add('progress-dot-current');
+                } else if (i < dayInPeriod) {
+                    dot.classList.add('progress-dot-past');
+                }
+
+                dot.setAttribute('aria-label', `Day ${i} of 18`);
+                this.elements.container.appendChild(dot);
             }
 
-            dot.setAttribute('aria-label', `Day ${i} of ${totalDaysInPeriod}`);
-            this.elements.container.appendChild(dot);
+            // Add Ayyám-i-Há indicator (square)
+            const ayyamIndicator = document.createElement('div');
+            ayyamIndicator.className = 'progress-dot progress-dot-square';
+            ayyamIndicator.setAttribute('aria-label', 'Ayyám-i-Há period');
+            this.elements.container.appendChild(ayyamIndicator);
+
+            // Add Month 19 indicator (hollow circle)
+            const month19Indicator = document.createElement('div');
+            month19Indicator.className = 'progress-dot progress-dot-hollow';
+            month19Indicator.setAttribute('aria-label', 'Month 19 (Alá)');
+            this.elements.container.appendChild(month19Indicator);
+        } else {
+            // Regular display: show dots for current period
+            for (let i = 1; i <= totalDaysInPeriod; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+
+                if (i === dayInPeriod) {
+                    dot.classList.add('progress-dot-current');
+                } else if (i < dayInPeriod) {
+                    dot.classList.add('progress-dot-past');
+                }
+
+                dot.setAttribute('aria-label', `Day ${i} of ${totalDaysInPeriod}`);
+                this.elements.container.appendChild(dot);
+            }
         }
     }
 };

@@ -475,6 +475,17 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }
 
+.progress-dot-square {
+    border-radius: 2px;
+    background-color: var(--color-text-muted);
+    border-color: var(--color-text-muted);
+}
+
+.progress-dot-hollow {
+    background-color: transparent;
+    border: 1px solid var(--color-text-muted);
+}
+
 /* Month Section Styling */
 .month-section {
     text-align: center;
