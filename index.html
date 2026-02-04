@@ -12,68 +12,75 @@
 </head>
 <body>
     <div class="app-container">
-        <header class="header">
-            <h1 class="app-title">Badí' Calendar</h1>
-            <div class="language-toggle" role="group" aria-label="Language selection">
-                <label class="language-toggle-label">
-                    <span class="language-option" data-lang="arabic">عربي</span>
-                    <input
-                        type="checkbox"
-                        id="language-toggle-input"
-                        class="language-toggle-input"
-                        aria-label="Toggle between Arabic and English"
-                    >
-                    <span class="language-toggle-slider"></span>
-                    <span class="language-option" data-lang="english">English</span>
-                </label>
-            </div>
-        </header>
+        <!-- Arabic Names Toggle (bottom-right) -->
+        <div class="language-toggle" role="group" aria-label="Language selection">
+            <label class="language-toggle-label">
+                <input
+                    type="checkbox"
+                    id="language-toggle-input"
+                    class="language-toggle-input"
+                    aria-label="Toggle English translation"
+                >
+                <span class="language-toggle-slider"></span>
+            </label>
+        </div>
 
         <main class="main-content">
-            <!-- Current Badí' Date Display -->
-            <section class="date-section" aria-label="Current Badí' Date">
-                <div class="date-display">
-                    <div class="weekday" id="weekday">--</div>
-                    <div class="day" id="day">--</div>
-                    <div class="month" id="month">--</div>
-                    <div class="year" id="year">--</div>
+            <!-- Year -->
+            <section class="year-section" aria-label="Bahá'í Year">
+                <div class="year" id="year">--</div>
+            </section>
+
+            <!-- Month/Period with Progress Dots -->
+            <section class="month-section" aria-label="Current Month or Period">
+                <div class="month-label" id="month-label">MONTH</div>
+                <div class="month-value" id="month">--</div>
+                <div class="progress-dots" id="progress-dots" aria-label="Days in period">
+                    <!-- Progress dots will be dynamically inserted here -->
                 </div>
             </section>
 
-            <!-- Current Time Display -->
-            <section class="time-section" aria-label="Current Time">
-                <div class="time-display">
-                    <span class="current-time" id="current-time">--:--:--</span>
+            <!-- Holy Day Indicator -->
+            <section class="holy-day-section" id="holy-day-section" aria-label="Holy Day" hidden>
+                <div class="holy-day-badge">
+                    <span class="holy-day-icon" aria-hidden="true">✦</span>
+                    <span class="holy-day-text" id="holy-day-text">--</span>
                 </div>
-                <div class="gregorian-date" id="gregorian-date">--</div>
+                <div class="holy-day-description" id="holy-day-description">--</div>
+                <div class="holy-day-type" id="holy-day-type">--</div>
             </section>
 
-            <!-- Sunset Countdown -->
+            <!-- Central Circular Countdown with Day Number -->
             <section class="countdown-section" aria-label="Sunset Countdown">
-                <h2 class="section-title">Next Sunset</h2>
-                <div class="countdown-display">
-                    <div class="countdown-item">
-                        <span class="countdown-value" id="countdown-hours">--</span>
-                        <span class="countdown-label">Hours</span>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-item">
-                        <span class="countdown-value" id="countdown-minutes">--</span>
-                        <span class="countdown-label">Minutes</span>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-item">
-                        <span class="countdown-value" id="countdown-seconds">--</span>
-                        <span class="countdown-label">Seconds</span>
+                <div class="countdown-circle" id="countdown-circle">
+                    <svg class="countdown-ring" viewBox="0 0 200 200" aria-hidden="true">
+                        <circle class="countdown-ring-background" cx="100" cy="100" r="90" />
+                        <circle class="countdown-ring-progress" cx="100" cy="100" r="90" id="countdown-ring-path" />
+                    </svg>
+                    <div class="countdown-center">
+                        <div class="day-number" id="day">--</div>
                     </div>
                 </div>
+            </section>
+
+            <!-- Weekday -->
+            <section class="weekday-section" aria-label="Weekday">
+                <div class="weekday" id="weekday">--</div>
+            </section>
+
+            <!-- Sunset Time -->
+            <section class="sunset-section" aria-label="Sunset Time">
                 <div class="sunset-time" id="sunset-time">Sunset at --:--</div>
             </section>
 
-            <!-- Location Section -->
-            <section class="location-section" aria-label="Location Settings">
+            <!-- Gregorian Date -->
+            <section class="gregorian-section" aria-label="Gregorian Date">
+                <div class="gregorian-date" id="gregorian-date">--</div>
+            </section>
+
+            <!-- Location Coordinates -->
+            <section class="location-section" aria-label="Location">
                 <div class="location-display">
-                    <span class="location-icon" aria-hidden="true"></span>
                     <span class="location-text" id="location-text">Detecting location...</span>
                 </div>
                 <div class="location-fallback" id="location-fallback" hidden>
@@ -93,12 +100,6 @@
                 </div>
             </section>
         </main>
-
-        <footer class="footer">
-            <p class="footer-text">
-                Badí' Calendar &copy; <span id="footer-year"></span>
-            </p>
-        </footer>
     </div>
 
     <script src="js/app.js" type="module"></script>
