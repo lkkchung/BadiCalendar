@@ -441,13 +441,24 @@ body {
     color: var(--color-text-muted);
 }
 
-/* Progress Dots */
+/* Month Dots - Year Progression */
+.month-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Progress Dots - Day Progression */
 .progress-dots {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.4rem;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     padding: 0.5rem;
     flex-wrap: wrap;
 }
@@ -477,8 +488,21 @@ body {
 
 .progress-dot-square {
     border-radius: 2px;
+    background-color: #e8e8e8;
+    border: 1px solid #d0d0d0;
+}
+
+.progress-dot-square.progress-dot-past {
     background-color: var(--color-text-muted);
     border-color: var(--color-text-muted);
+}
+
+.progress-dot-square.progress-dot-current {
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }
 
 .progress-dot-hollow {

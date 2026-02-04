@@ -830,23 +830,23 @@ const Countdown = {
 export { Countdown };
 
 /**
- * ProgressDots module - renders progress dots for days in period
+ * MonthDots module - renders month progression dots for the year (20 dots total)
  */
-const ProgressDots = {
+const MonthDots = {
     // DOM elements
     elements: {
         container: null
     },
 
     /**
-     * Initialize progress dots module
+     * Initialize month dots module
      */
     init() {
-        this.elements.container = document.getElementById('progress-dots');
+        this.elements.container = document.getElementById('month-dots');
     },
 
     /**
-     * Render progress dots for current period
+     * Render month progression dots (20 total: 18 months + Ayyám-i-Há + Month 19)
      */
     render() {
         if (!this.elements.container) return;
@@ -869,54 +869,106 @@ const ProgressDots = {
         }
 
         const periodInfo = getCurrentDayInPeriod(gregorianDate);
-        const { dayInPeriod, totalDaysInPeriod, isAyyamIHa, month } = periodInfo;
+        const { month, isAyyamIHa } = periodInfo;
 
         // Clear existing dots
         this.elements.container.innerHTML = '';
 
-        // Special case: Month 18 shows calendar progression
-        if (month === 18 && !isAyyamIHa) {
-            // Show 18 days + Ayyám-i-Há indicator + Month 19 indicator
-            for (let i = 1; i <= 18; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'progress-dot';
+        // Create 20 dots representing the year structure
+        for (let i = 1; i <= 20; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
 
-                if (i === dayInPeriod) {
+            if (i <= 18) {
+                // Months 1-18 (circles)
+                if (month === i && !isAyyamIHa) {
                     dot.classList.add('progress-dot-current');
-                } else if (i < dayInPeriod) {
+                } else if (month > i || (month === i && isAyyamIHa)) {
                     dot.classList.add('progress-dot-past');
                 }
-
-                dot.setAttribute('aria-label', `Day ${i} of 18`);
-                this.elements.container.appendChild(dot);
-            }
-
-            // Add Ayyám-i-Há indicator (square)
-            const ayyamIndicator = document.createElement('div');
-            ayyamIndicator.className = 'progress-dot progress-dot-square';
-            ayyamIndicator.setAttribute('aria-label', 'Ayyám-i-Há period');
-            this.elements.container.appendChild(ayyamIndicator);
-
-            // Add Month 19 indicator (hollow circle)
-            const month19Indicator = document.createElement('div');
-            month19Indicator.className = 'progress-dot progress-dot-hollow';
-            month19Indicator.setAttribute('aria-label', 'Month 19 (Alá)');
-            this.elements.container.appendChild(month19Indicator);
-        } else {
-            // Regular display: show dots for current period
-            for (let i = 1; i <= totalDaysInPeriod; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'progress-dot';
-
-                if (i === dayInPeriod) {
+                dot.setAttribute('aria-label', `Month ${i}`);
+            } else if (i === 19) {
+                // Ayyám-i-Há (square)
+                dot.classList.add('progress-dot-square');
+                if (isAyyamIHa) {
                     dot.classList.add('progress-dot-current');
-                } else if (i < dayInPeriod) {
+                } else if (month === 19) {
                     dot.classList.add('progress-dot-past');
                 }
-
-                dot.setAttribute('aria-label', `Day ${i} of ${totalDaysInPeriod}`);
-                this.elements.container.appendChild(dot);
+                dot.setAttribute('aria-label', 'Ayyám-i-Há');
+            } else {
+                // Month 19 (circle)
+                if (month === 19 && !isAyyamIHa) {
+                    dot.classList.add('progress-dot-current');
+                }
+                dot.setAttribute('aria-label', 'Month 19 (Alá)');
             }
+
+            this.elements.container.appendChild(dot);
+        }
+    }
+};
+
+export { MonthDots };
+
+/**
+ * ProgressDots module - renders progress dots for days in current period
+ */
+const ProgressDots = {
+    // DOM elements
+    elements: {
+        container: null
+    },
+
+    /**
+     * Initialize progress dots module
+     */
+    init() {
+        this.elements.container = document.getElementById('progress-dots');
+    },
+
+    /**
+     * Render progress dots for current period (day progression)
+     */
+    render() {
+        if (!this.elements.container) return;
+
+        // Determine correct Gregorian date for Bahá'í calculation
+        const gregorianDate = DebugTime.now();
+        const nextSunset = Sunset.getNextSunset();
+
+        // If nextSunset is tomorrow, we've passed today's sunset
+        if (nextSunset) {
+            const today = DebugTime.now();
+            today.setHours(0, 0, 0, 0);
+            const sunsetDay = new Date(nextSunset);
+            sunsetDay.setHours(0, 0, 0, 0);
+
+            // Sunset is tomorrow → increment date by 1 day
+            if (sunsetDay > today) {
+                gregorianDate.setDate(gregorianDate.getDate() + 1);
+            }
+        }
+
+        const periodInfo = getCurrentDayInPeriod(gregorianDate);
+        const { dayInPeriod, totalDaysInPeriod } = periodInfo;
+
+        // Clear existing dots
+        this.elements.container.innerHTML = '';
+
+        // Show dots for current period (day progression)
+        for (let i = 1; i <= totalDaysInPeriod; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+
+            if (i === dayInPeriod) {
+                dot.classList.add('progress-dot-current');
+            } else if (i < dayInPeriod) {
+                dot.classList.add('progress-dot-past');
+            }
+
+            dot.setAttribute('aria-label', `Day ${i} of ${totalDaysInPeriod}`);
+            this.elements.container.appendChild(dot);
         }
     }
 };
@@ -1025,7 +1077,8 @@ function updateBadiDateDisplay() {
         if (holyDaySection) holyDaySection.hidden = true;
     }
 
-    // Update progress dots
+    // Update month and day dots
+    MonthDots.render();
     ProgressDots.render();
 }
 
@@ -1091,6 +1144,7 @@ function init() {
     Geolocation.init();
     Sunset.init();
     Countdown.init();
+    MonthDots.init();
     ProgressDots.init();
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
