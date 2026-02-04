@@ -3,6 +3,156 @@ import { getCurrentBadiDate } from './badiDate.js';
 import { getNextSunset, formatTime } from './suncalc.js';
 
 /**
+ * Debug Time module - allows manual time/date override for testing
+ */
+const DebugTime = {
+    // Override date (null = use real time)
+    debugDate: null,
+
+    // Visual indicator element
+    indicatorElement: null,
+
+    /**
+     * Initialize debug mode from URL parameters
+     */
+    init() {
+        // Check URL for ?debugTime parameter
+        const params = new URLSearchParams(window.location.search);
+        const debugTimeParam = params.get('debugTime');
+        if (debugTimeParam) {
+            const date = new Date(debugTimeParam);
+            if (!isNaN(date.getTime())) {
+                this.setDebugTime(date);
+            }
+        }
+
+        // Expose console commands
+        window.debugTime = (dateStr) => this.setDebugTime(new Date(dateStr));
+        window.clearDebugTime = () => this.clearDebugTime();
+        window.advanceTime = (minutes) => this.advanceTime(minutes);
+
+        console.log('Debug mode available:');
+        console.log('  debugTime("2024-03-20 18:00:00") - Set custom date/time');
+        console.log('  advanceTime(30) - Advance debug time by N minutes');
+        console.log('  clearDebugTime() - Return to real time');
+    },
+
+    /**
+     * Get current time (debug or real)
+     * @returns {Date}
+     */
+    now() {
+        return this.debugDate ? new Date(this.debugDate) : new Date();
+    },
+
+    /**
+     * Set debug time
+     * @param {Date} date
+     */
+    setDebugTime(date) {
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date');
+            return;
+        }
+
+        this.debugDate = date;
+        this.showIndicator();
+        console.log('Debug time set to:', date.toString());
+
+        // Trigger updates
+        this.triggerUpdates();
+    },
+
+    /**
+     * Clear debug time (return to real time)
+     */
+    clearDebugTime() {
+        this.debugDate = null;
+        this.hideIndicator();
+        console.log('Debug time cleared - using real time');
+
+        // Trigger updates
+        this.triggerUpdates();
+    },
+
+    /**
+     * Advance debug time by specified minutes
+     * @param {number} minutes - Number of minutes to advance (can be negative)
+     */
+    advanceTime(minutes) {
+        if (!this.debugDate) {
+            console.error('Debug mode not active. Call debugTime() first.');
+            return;
+        }
+
+        this.debugDate.setMinutes(this.debugDate.getMinutes() + minutes);
+        console.log('Advanced to:', this.debugDate.toString());
+        this.showIndicator();
+        this.triggerUpdates();
+    },
+
+    /**
+     * Trigger all time-dependent updates
+     */
+    triggerUpdates() {
+        // Force location update to recalculate sunset
+        const location = Geolocation.getLocation();
+        if (location) {
+            window.dispatchEvent(new CustomEvent('locationChanged', {
+                detail: location
+            }));
+        }
+
+        // Update displays
+        updateBadiDateDisplay();
+        updateGregorianDateDisplay();
+        updateTimeDisplay();
+    },
+
+    /**
+     * Show debug mode indicator
+     */
+    showIndicator() {
+        if (!this.indicatorElement) {
+            this.indicatorElement = document.createElement('div');
+            this.indicatorElement.id = 'debug-indicator';
+            this.indicatorElement.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: #ff4444;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-family: monospace;
+                font-size: 12px;
+                z-index: 9999;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                cursor: pointer;
+                user-select: none;
+            `;
+            this.indicatorElement.title = 'Click to exit debug mode';
+            this.indicatorElement.addEventListener('click', () => this.clearDebugTime());
+            document.body.appendChild(this.indicatorElement);
+        }
+
+        this.indicatorElement.textContent = `🐛 DEBUG: ${this.debugDate.toLocaleString()}`;
+        this.indicatorElement.style.display = 'block';
+    },
+
+    /**
+     * Hide debug mode indicator
+     */
+    hideIndicator() {
+        if (this.indicatorElement) {
+            this.indicatorElement.style.display = 'none';
+        }
+    }
+};
+
+export { DebugTime };
+
+/**
  * Geolocation module - handles browser geolocation API integration
  */
 const Geolocation = {
@@ -396,7 +546,7 @@ const Sunset = {
             return;
         }
 
-        this.nextSunset = getNextSunset(location.latitude, location.longitude);
+        this.nextSunset = getNextSunset(location.latitude, location.longitude, DebugTime.now());
         this.updateDisplay();
 
         // Dispatch event for countdown timer
@@ -492,7 +642,7 @@ const Countdown = {
             return;
         }
 
-        const now = new Date();
+        const now = DebugTime.now();
         const diff = this.targetSunset.getTime() - now.getTime();
 
         if (diff <= 0) {
@@ -546,13 +696,13 @@ export { Countdown };
  */
 function updateBadiDateDisplay() {
     // Determine correct Gregorian date for Bahá'í calculation
-    const gregorianDate = new Date();
+    const gregorianDate = DebugTime.now();
     const nextSunset = Sunset.getNextSunset();
 
     // If nextSunset is tomorrow, we've passed today's sunset
     // Use tomorrow's Gregorian date for Bahá'í calculation
     if (nextSunset) {
-        const today = new Date();
+        const today = DebugTime.now();
         today.setHours(0, 0, 0, 0);
         const sunsetDay = new Date(nextSunset);
         sunsetDay.setHours(0, 0, 0, 0);
@@ -601,7 +751,7 @@ function updateGregorianDateDisplay() {
     const gregorianDateEl = document.getElementById('gregorian-date');
     if (!gregorianDateEl) return;
 
-    const now = new Date();
+    const now = DebugTime.now();
     const options = {
         weekday: 'long',
         day: 'numeric',
@@ -620,7 +770,7 @@ function updateTimeDisplay() {
     const timeEl = document.getElementById('current-time');
     if (!timeEl) return;
 
-    const now = new Date();
+    const now = DebugTime.now();
     // Use locale-aware formatting with hours, minutes, seconds
     timeEl.textContent = now.toLocaleTimeString(undefined, {
         hour: '2-digit',
@@ -643,7 +793,7 @@ function startTimeUpdater() {
 function updateFooterYear() {
     const footerYearEl = document.getElementById('footer-year');
     if (footerYearEl) {
-        footerYearEl.textContent = new Date().getFullYear();
+        footerYearEl.textContent = DebugTime.now().getFullYear();
     }
 }
 
@@ -651,6 +801,7 @@ function updateFooterYear() {
  * Initialize the application
  */
 function init() {
+    DebugTime.init();
     Geolocation.init();
     Sunset.init();
     Countdown.init();
