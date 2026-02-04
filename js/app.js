@@ -1,6 +1,115 @@
 // Badí' Calendar Application
-import { getCurrentBadiDate } from './badiDate.js';
+import { getCurrentBadiDate, getCurrentDayInPeriod } from './badiDate.js';
 import { getNextSunset, formatTime } from './suncalc.js';
+
+/**
+ * Language Preference module - manages language state and persistence
+ */
+const LanguagePreference = {
+    // Storage key
+    STORAGE_KEY: 'badiCalendarLanguage',
+
+    // Valid language values
+    LANGUAGES: {
+        ARABIC: 'arabic',
+        ENGLISH: 'english'
+    },
+
+    // Current language preference
+    currentLanguage: null,
+
+    // DOM elements
+    elements: {
+        toggleInput: null
+    },
+
+    /**
+     * Initialize language preference module
+     */
+    init() {
+        this.elements.toggleInput = document.getElementById('language-toggle-input');
+
+        // Load saved preference or default to Arabic
+        this.currentLanguage = this.loadPreference() || this.LANGUAGES.ARABIC;
+
+        // Update toggle UI to match saved preference
+        this.updateToggleUI();
+
+        // Set up event listener for toggle changes
+        if (this.elements.toggleInput) {
+            this.elements.toggleInput.addEventListener('change', (e) => {
+                const newLanguage = e.target.checked
+                    ? this.LANGUAGES.ENGLISH
+                    : this.LANGUAGES.ARABIC;
+                this.setLanguage(newLanguage);
+            });
+        }
+    },
+
+    /**
+     * Get current language preference
+     * @returns {string} - 'arabic' or 'english'
+     */
+    getLanguage() {
+        return this.currentLanguage;
+    },
+
+    /**
+     * Set language preference
+     * @param {string} language - 'arabic' or 'english'
+     */
+    setLanguage(language) {
+        if (language !== this.LANGUAGES.ARABIC && language !== this.LANGUAGES.ENGLISH) {
+            console.error('Invalid language:', language);
+            return;
+        }
+
+        this.currentLanguage = language;
+        this.savePreference(language);
+        this.updateToggleUI();
+
+        // Dispatch custom event for other modules to react
+        window.dispatchEvent(new CustomEvent('languageChanged', {
+            detail: { language: language }
+        }));
+    },
+
+    /**
+     * Update toggle UI to match current language
+     */
+    updateToggleUI() {
+        if (this.elements.toggleInput) {
+            this.elements.toggleInput.checked = (this.currentLanguage === this.LANGUAGES.ENGLISH);
+        }
+    },
+
+    /**
+     * Save language preference to localStorage
+     * @param {string} language
+     */
+    savePreference(language) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, language);
+        } catch (e) {
+            console.warn('Failed to save language preference:', e);
+        }
+    },
+
+    /**
+     * Load language preference from localStorage
+     * @returns {string|null}
+     */
+    loadPreference() {
+        try {
+            return localStorage.getItem(this.STORAGE_KEY);
+        } catch (e) {
+            console.warn('Failed to load language preference:', e);
+            return null;
+        }
+    }
+};
+
+export { LanguagePreference };
 
 /**
  * Debug Time module - allows manual time/date override for testing
@@ -721,6 +830,70 @@ const Countdown = {
 export { Countdown };
 
 /**
+ * ProgressDots module - renders progress dots for days in period
+ */
+const ProgressDots = {
+    // DOM elements
+    elements: {
+        container: null
+    },
+
+    /**
+     * Initialize progress dots module
+     */
+    init() {
+        this.elements.container = document.getElementById('progress-dots');
+    },
+
+    /**
+     * Render progress dots for current period
+     */
+    render() {
+        if (!this.elements.container) return;
+
+        // Determine correct Gregorian date for Bahá'í calculation
+        const gregorianDate = DebugTime.now();
+        const nextSunset = Sunset.getNextSunset();
+
+        // If nextSunset is tomorrow, we've passed today's sunset
+        if (nextSunset) {
+            const today = DebugTime.now();
+            today.setHours(0, 0, 0, 0);
+            const sunsetDay = new Date(nextSunset);
+            sunsetDay.setHours(0, 0, 0, 0);
+
+            // Sunset is tomorrow → increment date by 1 day
+            if (sunsetDay > today) {
+                gregorianDate.setDate(gregorianDate.getDate() + 1);
+            }
+        }
+
+        const periodInfo = getCurrentDayInPeriod(gregorianDate);
+        const { dayInPeriod, totalDaysInPeriod } = periodInfo;
+
+        // Clear existing dots
+        this.elements.container.innerHTML = '';
+
+        // Create dots
+        for (let i = 1; i <= totalDaysInPeriod; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+
+            if (i === dayInPeriod) {
+                dot.classList.add('progress-dot-current');
+            } else if (i < dayInPeriod) {
+                dot.classList.add('progress-dot-past');
+            }
+
+            dot.setAttribute('aria-label', `Day ${i} of ${totalDaysInPeriod}`);
+            this.elements.container.appendChild(dot);
+        }
+    }
+};
+
+export { ProgressDots };
+
+/**
  * Update the Bahá'í date display
  */
 function updateBadiDateDisplay() {
@@ -744,18 +917,31 @@ function updateBadiDateDisplay() {
 
     const badiDate = getCurrentBadiDate(gregorianDate);
 
+    // Get current language preference
+    const language = LanguagePreference.getLanguage();
+    const isEnglish = (language === LanguagePreference.LANGUAGES.ENGLISH);
+
     const weekdayEl = document.getElementById('weekday');
     const dayEl = document.getElementById('day');
     const monthEl = document.getElementById('month');
     const yearEl = document.getElementById('year');
 
     if (weekdayEl) {
-        weekdayEl.textContent = `${badiDate.weekdayName.arabic}`;
-        weekdayEl.title = badiDate.weekdayName.english;
+        weekdayEl.textContent = isEnglish
+            ? badiDate.weekdayName.english
+            : badiDate.weekdayName.arabic;
+        weekdayEl.title = isEnglish
+            ? badiDate.weekdayName.arabic
+            : badiDate.weekdayName.english;
     }
 
     if (dayEl) {
         dayEl.textContent = badiDate.day;
+    }
+
+    const monthLabelEl = document.getElementById('month-label');
+    if (monthLabelEl) {
+        monthLabelEl.textContent = badiDate.isAyyamIHa ? 'PERIOD' : 'MONTH';
     }
 
     if (monthEl) {
@@ -763,14 +949,54 @@ function updateBadiDateDisplay() {
             monthEl.textContent = 'Ayyám-i-Há';
             monthEl.title = 'Intercalary Days';
         } else {
-            monthEl.textContent = badiDate.monthName.arabic;
-            monthEl.title = badiDate.monthName.english;
+            monthEl.textContent = isEnglish
+                ? badiDate.monthName.english
+                : badiDate.monthName.arabic;
+            monthEl.title = isEnglish
+                ? badiDate.monthName.arabic
+                : badiDate.monthName.english;
         }
     }
 
     if (yearEl) {
         yearEl.textContent = `${badiDate.year} B.E.`;
     }
+
+    // Update holy day display
+    const holyDaySection = document.getElementById('holy-day-section');
+    const holyDayText = document.getElementById('holy-day-text');
+    const holyDayDescription = document.getElementById('holy-day-description');
+    const holyDayType = document.getElementById('holy-day-type');
+
+    if (badiDate.holyDay) {
+        // Show holy day section
+        if (holyDaySection) holyDaySection.hidden = false;
+
+        // Display holy day name based on language preference
+        if (holyDayText) {
+            holyDayText.textContent = isEnglish
+                ? badiDate.holyDay.english
+                : badiDate.holyDay.arabic;
+        }
+
+        // Display description
+        if (holyDayDescription) {
+            holyDayDescription.textContent = badiDate.holyDay.description;
+        }
+
+        // Display type (work-suspended or commemorative)
+        if (holyDayType) {
+            holyDayType.textContent = badiDate.holyDay.workSuspended
+                ? 'Work Suspended'
+                : 'Commemorative Holy Day';
+        }
+    } else {
+        // Hide holy day section
+        if (holyDaySection) holyDaySection.hidden = true;
+    }
+
+    // Update progress dots
+    ProgressDots.render();
 }
 
 /**
@@ -831,9 +1057,11 @@ function updateFooterYear() {
  */
 function init() {
     DebugTime.init();
+    LanguagePreference.init();
     Geolocation.init();
     Sunset.init();
     Countdown.init();
+    ProgressDots.init();
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
     startTimeUpdater();
@@ -841,6 +1069,11 @@ function init() {
 
     // Listen for Bahá'í day change (at sunset)
     window.addEventListener('badiDayChanged', () => {
+        updateBadiDateDisplay();
+    });
+
+    // Listen for language preference changes
+    window.addEventListener('languageChanged', () => {
         updateBadiDateDisplay();
     });
 }

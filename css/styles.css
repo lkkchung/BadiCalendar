@@ -103,6 +103,49 @@ body {
     color: var(--color-text-muted);
 }
 
+/* Holy Day Section */
+.holy-day-section {
+    background: linear-gradient(135deg, #f8f4e6 0%, #fff9e6 100%);
+    padding: 1rem 1.5rem;
+    text-align: center;
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
+}
+
+.holy-day-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.holy-day-icon {
+    font-size: 1.25rem;
+    color: #d4af37;
+}
+
+.holy-day-text {
+    font-size: var(--font-size-heading);
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.holy-day-description {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.holy-day-type {
+    font-size: var(--font-size-small);
+    color: #d4af37;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 /* Time Section */
 .time-section {
     text-align: center;
@@ -243,77 +286,147 @@ body {
 
 /* Language Toggle */
 .language-toggle {
-    margin-top: 1rem;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
 }
 
 .language-toggle-label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     cursor: pointer;
     user-select: none;
+    padding: 0.75rem 1rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.language-toggle-label:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .language-option {
     font-size: var(--font-size-small);
+    font-weight: 500;
     color: var(--color-text-muted);
-    transition: color 0.2s ease;
-}
-
-.language-option[data-lang="arabic"] {
-    order: 1;
+    transition: all 0.3s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
 }
 
 .language-toggle-input {
-    order: 2;
     position: relative;
     appearance: none;
-    width: 44px;
-    height: 24px;
-    background: var(--color-border);
-    border-radius: 12px;
+    width: 52px;
+    height: 28px;
+    background: #e0e0e0;
+    border-radius: 14px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+}
+
+.language-toggle-input:hover {
+    background: #d0d0d0;
 }
 
 .language-toggle-input:checked {
     background: var(--color-primary);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.language-toggle-input:checked:hover {
+    background: #1a1a1a;
+}
+
+/* Focus state for accessibility */
+.language-toggle-input:focus {
+    outline: none;
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.15),
+        0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.language-toggle-input:focus-visible {
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.15),
+        0 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
 .language-toggle-slider {
-    order: 2;
     position: absolute;
-    width: 44px;
-    height: 24px;
+    width: 52px;
+    height: 28px;
     pointer-events: none;
+    left: 0.5rem;
 }
 
 .language-toggle-slider::before {
     content: '';
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
     background: white;
     border-radius: 50%;
-    transition: transform 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .language-toggle-input:checked + .language-toggle-slider::before {
-    transform: translateX(20px);
+    transform: translateX(24px);
 }
 
-.language-option[data-lang="english"] {
-    order: 3;
+/* Hover effect on slider knob */
+.language-toggle-input:hover + .language-toggle-slider::before {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Highlight active language */
-.language-toggle-input:not(:checked) ~ .language-option[data-lang="arabic"],
+/* Highlight when English is active */
 .language-toggle-input:checked ~ .language-option[data-lang="english"] {
     color: var(--color-primary);
     font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+    .language-toggle-label {
+        gap: 0.5rem;
+    }
+
+    .language-option {
+        font-size: 0.8rem;
+    }
+
+    .language-toggle-input {
+        width: 48px;
+        height: 26px;
+    }
+
+    .language-toggle-slider {
+        width: 48px;
+        height: 26px;
+    }
+
+    .language-toggle-slider::before {
+        width: 20px;
+        height: 20px;
+    }
+
+    .language-toggle-input:checked + .language-toggle-slider::before {
+        transform: translateX(22px);
+    }
 }
 
 /* Footer */
@@ -326,6 +439,169 @@ body {
 .footer-text {
     font-size: var(--font-size-small);
     color: var(--color-text-muted);
+}
+
+/* Progress Dots */
+.progress-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+    padding: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #e8e8e8;
+    border: 1px solid #d0d0d0;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.progress-dot-past {
+    background-color: var(--color-text-muted);
+    border-color: var(--color-text-muted);
+}
+
+.progress-dot-current {
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Month Section Styling */
+.month-section {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.month-label {
+    font-family: var(--property-font);
+    font-weight: var(--property-font-weight);
+    font-size: 0.75rem;
+    letter-spacing: var(--label-letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.month-value {
+    font-family: var(--value-font);
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: var(--value-letter-spacing);
+    color: var(--color-primary);
+}
+
+/* Year Section */
+.year-section {
+    text-align: center;
+    padding: 1.5rem 1rem 0.5rem;
+}
+
+.year {
+    font-family: var(--property-font);
+    font-weight: var(--property-font-weight);
+    font-size: 1rem;
+    color: var(--color-text-muted);
+}
+
+/* Weekday Section */
+.weekday-section {
+    text-align: center;
+    padding: 1rem;
+}
+
+.weekday {
+    font-family: var(--property-font);
+    font-weight: var(--property-font-weight);
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+/* Sunset Section */
+.sunset-section {
+    text-align: center;
+    padding: 0.5rem 1rem;
+}
+
+.sunset-time {
+    font-family: var(--property-font);
+    font-weight: var(--property-font-weight);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+/* Gregorian Section */
+.gregorian-section {
+    text-align: center;
+    padding: 1rem;
+}
+
+.gregorian-date {
+    font-family: var(--property-font);
+    font-weight: var(--property-font-weight);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+/* Countdown Section */
+.countdown-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+.countdown-circle {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.countdown-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.countdown-ring-background {
+    fill: none;
+    stroke: #e8e8e8;
+    stroke-width: 2;
+}
+
+.countdown-ring-progress {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 565.48;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+.countdown-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.day-number {
+    font-family: var(--value-font);
+    font-size: 4rem;
+    font-weight: 400;
+    letter-spacing: var(--value-letter-spacing);
+    color: var(--color-primary);
+    font-feature-settings: var(--font-feature-lnum);
 }
 
 /* Utility */
