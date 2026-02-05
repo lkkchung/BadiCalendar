@@ -700,9 +700,9 @@ const Sunset = {
         if (!this.elements.sunsetTime) return;
 
         if (this.nextSunset) {
-            this.elements.sunsetTime.textContent = `Sunset at ${formatTime(this.nextSunset)}`;
+            this.elements.sunsetTime.textContent = formatTime(this.nextSunset);
         } else {
-            this.elements.sunsetTime.textContent = 'Sunset time unavailable';
+            this.elements.sunsetTime.textContent = '--:--';
         }
     },
 
