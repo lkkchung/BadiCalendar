@@ -2,12 +2,12 @@
 /* Functional design - Arial only, 3 font sizes */
 
 :root {
-    --color-primary: #000000;
-    --color-background: #f5f5f5;
-    --color-surface: #ffffff;
-    --color-text: #1a1a1a;
-    --color-text-muted: #666666;
-    --color-border: #dddddd;
+    --color-primary: #ffffff;
+    --color-background: #555555;
+    --color-surface: #555555;
+    --color-text: #ffffff;
+    --color-text-muted: #ffffff;
+    --color-border: #777777;
     --font-stack: Arial, sans-serif;
 
     /* Typography tokens */
@@ -279,11 +279,13 @@ body {
     padding: 0.5rem;
     font-family: inherit;
     font-size: var(--font-size-body);
-    border: 1px solid var(--color-border);
+    border: 1px solid #ffffff;
+    background: transparent;
+    color: #ffffff;
 }
 
 .location-input:focus {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid #ffffff;
     outline-offset: -2px;
 }
 
@@ -292,9 +294,9 @@ body {
     font-family: inherit;
     font-size: var(--font-size-small);
     font-weight: bold;
-    color: white;
-    background: var(--color-primary);
-    border: none;
+    color: #555555;
+    background: #ffffff;
+    border: 1px solid #ffffff;
     cursor: pointer;
 }
 
@@ -319,21 +321,21 @@ body {
     user-select: none;
     padding: 0.75rem 1rem;
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(8px);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease;
 }
 
 .language-toggle-label:hover {
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .language-option {
     font-size: var(--font-size-small);
     font-weight: 500;
-    color: var(--color-text-muted);
+    color: #ffffff;
     transition: all 0.3s ease;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
@@ -344,26 +346,26 @@ body {
     appearance: none;
     width: 52px;
     height: 28px;
-    background: #e0e0e0;
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 14px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
     flex-shrink: 0;
     margin-right: 0.5rem;
 }
 
 .language-toggle-input:hover {
-    background: #d0d0d0;
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .language-toggle-input:checked {
-    background: var(--color-primary);
+    background: #ffffff;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .language-toggle-input:checked:hover {
-    background: #1a1a1a;
+    background: #ffffff;
 }
 
 /* Focus state for accessibility */
@@ -395,10 +397,10 @@ body {
     left: 3px;
     width: 22px;
     height: 22px;
-    background: white;
+    background: #ffffff;
     border-radius: 50%;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .language-toggle-input:checked + .language-toggle-slider::before {
@@ -412,9 +414,9 @@ body {
 
 /* Highlight when English is active */
 .language-toggle-input:checked ~ .language-option[data-lang="english"] {
-    color: var(--color-primary);
+    color: #ffffff;
     font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Mobile responsiveness */
@@ -485,23 +487,23 @@ body {
     width: clamp(5px, 0.9vh, 10px);
     height: clamp(5px, 0.9vh, 10px);
     border-radius: 50%;
-    background-color: #e8e8e8;
-    border: 1px solid #d0d0d0;
+    background-color: transparent;
+    border: 1px solid #ffffff;
     transition: all 0.3s ease;
     flex-shrink: 0;
 }
 
 .progress-dot-past {
-    background-color: var(--color-text-muted);
-    border-color: var(--color-text-muted);
+    background-color: #ffffff;
+    border-color: #ffffff;
 }
 
 .progress-dot-current {
     width: clamp(10px, 1.8vh, 18px);
     height: clamp(10px, 1.8vh, 18px);
     background-color: transparent;
-    border: clamp(1px, 0.3vh, 2px) solid var(--color-primary);
-    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(0, 0, 0, 0.05);
+    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
+    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(255, 255, 255, 0.3);
 }
 
 .progress-dot-square {
@@ -511,21 +513,21 @@ body {
 }
 
 .progress-dot-square.progress-dot-past {
-    background-color: var(--color-text-muted);
-    border-color: var(--color-text-muted);
+    background-color: #ffffff;
+    border-color: #ffffff;
 }
 
 .progress-dot-square.progress-dot-current {
     width: clamp(10px, 1.8vh, 18px);
     height: clamp(10px, 1.8vh, 18px);
     background-color: transparent;
-    border: clamp(1px, 0.3vh, 2px) solid var(--color-primary);
-    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(0, 0, 0, 0.05);
+    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
+    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(255, 255, 255, 0.3);
 }
 
 .progress-dot-hollow {
     background-color: transparent;
-    border: 1px solid var(--color-text-muted);
+    border: 1px solid #ffffff;
 }
 
 /* Month Section Styling */
@@ -699,20 +701,20 @@ body {
     width: clamp(8px, 1.8vh, 16px);
     height: clamp(8px, 1.8vh, 16px);
     border-radius: 50%;
-    background-color: #e8e8e8;
-    border: 1px solid #d0d0d0;
+    background-color: transparent;
+    border: 1px solid #ffffff;
     transition: all 0.3s ease;
 }
 
 .day-dot-previous {
-    background-color: var(--color-text-muted);
-    border-color: var(--color-text-muted);
+    background-color: #ffffff;
+    border-color: #ffffff;
 }
 
 .day-dot-current {
     background-color: transparent;
-    border: clamp(1px, 0.3vh, 2px) solid var(--color-text);
-    box-shadow: 0 0 0 clamp(1px, 0.3vh, 2px) rgba(0, 0, 0, 0.1);
+    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
+    box-shadow: 0 0 0 clamp(1px, 0.3vh, 2px) rgba(255, 255, 255, 0.3);
 }
 
 .day-dot-current::after {
@@ -724,13 +726,13 @@ body {
     width: clamp(20px, 4vh, 32px);
     height: clamp(20px, 4vh, 32px);
     border-radius: 50%;
-    border: clamp(1px, 0.3vh, 2px) solid var(--color-text);
+    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
     opacity: 0.5;
 }
 
 .day-dot-future {
     background-color: transparent;
-    border: 1px solid #d0d0d0;
+    border: 1px solid #ffffff;
 }
 
 /* Utility */
