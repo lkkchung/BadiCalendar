@@ -9,19 +9,30 @@
     --color-text-muted: #666666;
     --color-border: #dddddd;
     --font-stack: Arial, sans-serif;
-    --font-size-heading: 1.5rem;
-    --font-size-body: 1rem;
-    --font-size-small: 0.875rem;
 
     /* Typography tokens */
     --property-font: 'Montserrat', sans-serif;
     --property-font-weight: 300;
     --value-font: 'Times New Roman', serif;
-    --label-letter-spacing: 2.88px;
-    --value-letter-spacing: 4.4px;
-    --font-feature-lnum: 'lnum' 1;
-    --font-feature-pnum: 'pnum' 1;
-    --font-feature-onum: 'onum' 1;
+
+    /* Responsive scaling based on viewport height */
+    --scale-factor: clamp(0.7, 1vh, 1.5);
+
+    /* Responsive font sizes */
+    --font-label: clamp(8px, 1.5vh, 14px);
+    --font-value: clamp(12px, 2.5vh, 22px);
+    --font-day-number: clamp(50px, 12vh, 150px);
+    --font-body-text: clamp(10px, 2vh, 17px);
+
+    /* Responsive spacing */
+    --spacing-xs: clamp(0.25rem, 0.5vh, 0.5rem);
+    --spacing-sm: clamp(0.25rem, 1vh, 0.75rem);
+    --spacing-md: clamp(0.5rem, 1.5vh, 1rem);
+
+    /* Responsive letter spacing */
+    --label-letter-spacing: clamp(1.8px, 0.35vh, 3.2px);
+    --value-letter-spacing: clamp(2.5px, 0.6vh, 5px);
+    --day-letter-spacing: clamp(-4px, -0.8vh, -6px);
 }
 
 /* Reset */
@@ -37,17 +48,23 @@ body {
     background-color: var(--color-background);
     color: var(--color-text);
     line-height: 1.5;
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 640px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 /* Layout */
 .app-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 640px;
     max-width: 400px;
     margin: 0 auto;
     padding: 0.5rem;
+    overflow-y: auto;
 }
 
 .header {
@@ -66,6 +83,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    justify-content: space-evenly;
+    min-height: 0;
 }
 
 /* Date Section */
@@ -210,11 +229,6 @@ body {
     padding-bottom: 1rem;
 }
 
-.sunset-time {
-    margin-top: 1rem;
-    font-size: var(--font-size-small);
-    color: var(--color-text-muted);
-}
 
 /* Location Section */
 .location-section {
@@ -236,7 +250,7 @@ body {
 
 .location-text {
     font-family: var(--value-font);
-    font-size: 13px;
+    font-size: var(--font-body-text);
     font-weight: 400;
     text-transform: uppercase;
     font-feature-settings: 'onum', 'pnum';
@@ -450,9 +464,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-    padding: 0.25rem;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs);
     flex-wrap: wrap;
 }
 
@@ -468,8 +482,8 @@ body {
 }
 
 .progress-dot {
-    width: 6px;
-    height: 6px;
+    width: clamp(5px, 0.9vh, 10px);
+    height: clamp(5px, 0.9vh, 10px);
     border-radius: 50%;
     background-color: #e8e8e8;
     border: 1px solid #d0d0d0;
@@ -483,11 +497,11 @@ body {
 }
 
 .progress-dot-current {
-    width: 12px;
-    height: 12px;
+    width: clamp(10px, 1.8vh, 18px);
+    height: clamp(10px, 1.8vh, 18px);
     background-color: transparent;
-    border: 2px solid var(--color-primary);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+    border: clamp(1px, 0.3vh, 2px) solid var(--color-primary);
+    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(0, 0, 0, 0.05);
 }
 
 .progress-dot-square {
@@ -502,11 +516,11 @@ body {
 }
 
 .progress-dot-square.progress-dot-current {
-    width: 12px;
-    height: 12px;
+    width: clamp(10px, 1.8vh, 18px);
+    height: clamp(10px, 1.8vh, 18px);
     background-color: transparent;
-    border: 2px solid var(--color-primary);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+    border: clamp(1px, 0.3vh, 2px) solid var(--color-primary);
+    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(0, 0, 0, 0.05);
 }
 
 .progress-dot-hollow {
@@ -517,28 +531,28 @@ body {
 /* Month Section Styling */
 .month-section {
     text-align: center;
-    padding: 0.5rem 0.5rem;
+    padding: var(--spacing-sm) var(--spacing-sm);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: var(--spacing-xs);
 }
 
 .month-label {
     font-family: var(--property-font);
     font-weight: var(--property-font-weight);
-    font-size: 10px;
-    letter-spacing: 2.4px;
+    font-size: var(--font-label);
+    letter-spacing: var(--label-letter-spacing);
     text-transform: uppercase;
     color: var(--color-text-muted);
 }
 
 .month-value {
     font-family: var(--value-font);
-    font-size: 16px;
-    line-height: 14px;
+    font-size: var(--font-value);
+    line-height: 1.1;
     font-weight: 400;
-    letter-spacing: 3.2px;
+    letter-spacing: var(--value-letter-spacing);
     text-transform: uppercase;
     color: var(--color-text);
 }
@@ -546,26 +560,26 @@ body {
 /* Year Section */
 .year-section {
     text-align: center;
-    padding: 0.5rem 0.5rem 0.25rem;
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-xs);
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--spacing-xs);
 }
 
 .year-label {
     font-family: var(--property-font);
     font-weight: var(--property-font-weight);
-    font-size: 10px;
-    letter-spacing: 2.4px;
+    font-size: var(--font-label);
+    letter-spacing: var(--label-letter-spacing);
     text-transform: uppercase;
     color: var(--color-text-muted);
 }
 
 .year {
     font-family: var(--value-font);
-    font-size: 16px;
-    line-height: 14px;
-    letter-spacing: 3.2px;
+    font-size: var(--font-value);
+    line-height: 1.1;
+    letter-spacing: var(--value-letter-spacing);
     text-transform: uppercase;
     font-feature-settings: 'lnum', 'pnum';
     color: var(--color-text);
@@ -574,27 +588,27 @@ body {
 /* Weekday Section */
 .weekday-section {
     text-align: center;
-    padding: 0.25rem 0.5rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--spacing-xs);
 }
 
 .weekday-label {
     font-family: var(--property-font);
     font-weight: var(--property-font-weight);
-    font-size: 10px;
-    letter-spacing: 2.4px;
+    font-size: var(--font-label);
+    letter-spacing: var(--label-letter-spacing);
     text-transform: uppercase;
     color: var(--color-text-muted);
 }
 
 .weekday {
     font-family: var(--value-font);
-    font-size: 16px;
-    line-height: 14px;
+    font-size: var(--font-value);
+    line-height: 1.1;
     font-weight: 400;
-    letter-spacing: 3.2px;
+    letter-spacing: var(--value-letter-spacing);
     text-transform: uppercase;
     color: var(--color-text);
 }
@@ -602,27 +616,27 @@ body {
 /* Sunset Section */
 .sunset-section {
     text-align: center;
-    padding: 0.25rem 0.5rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--spacing-xs);
 }
 
 .sunset-label {
     font-family: var(--property-font);
     font-weight: var(--property-font-weight);
-    font-size: 10px;
-    letter-spacing: 2.4px;
+    font-size: var(--font-label);
+    letter-spacing: var(--label-letter-spacing);
     text-transform: uppercase;
     color: var(--color-text-muted);
 }
 
 .sunset-time {
     font-family: var(--value-font);
-    font-size: 16px;
-    line-height: 14px;
+    font-size: var(--font-value);
+    line-height: 1.1;
     font-weight: 400;
-    letter-spacing: 3.2px;
+    letter-spacing: var(--value-letter-spacing);
     text-transform: uppercase;
     font-feature-settings: 'lnum', 'pnum';
     color: var(--color-text);
@@ -631,69 +645,92 @@ body {
 /* Gregorian Section */
 .gregorian-section {
     text-align: center;
-    padding: 0.25rem 0.5rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
 }
 
 .gregorian-date {
     font-family: var(--value-font);
-    font-size: 13px;
+    font-size: var(--font-body-text);
     font-style: italic;
     font-weight: 400;
     font-feature-settings: 'lnum', 'pnum';
     color: var(--color-text);
 }
 
-/* Countdown Section */
-.countdown-section {
+/* Day Counter Section */
+.day-counter-section {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.5rem 0.5rem;
+    padding: var(--spacing-sm) var(--spacing-sm);
 }
 
-.countdown-circle {
+.day-counter {
     position: relative;
-    width: 150px;
-    height: 150px;
-}
-
-.countdown-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.countdown-ring-background {
-    fill: none;
-    stroke: #e8e8e8;
-    stroke-width: 2;
-}
-
-.countdown-ring-progress {
-    fill: none;
-    stroke: var(--color-primary);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-dasharray: 565.48;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.3s ease;
-}
-
-.countdown-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+    width: clamp(150px, 32vh, 300px);
+    height: clamp(150px, 32vh, 300px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .day-number {
     font-family: var(--value-font);
-    font-size: 80px;
+    font-size: var(--font-day-number);
     font-weight: 400;
-    letter-spacing: -3px;
+    letter-spacing: var(--day-letter-spacing);
     color: var(--color-text);
     font-feature-settings: 'lnum', 'pnum';
+    position: relative;
+    z-index: 2;
+}
+
+.day-dots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.day-dot {
+    position: absolute;
+    width: clamp(8px, 1.8vh, 16px);
+    height: clamp(8px, 1.8vh, 16px);
+    border-radius: 50%;
+    background-color: #e8e8e8;
+    border: 1px solid #d0d0d0;
+    transition: all 0.3s ease;
+}
+
+.day-dot-previous {
+    background-color: var(--color-text-muted);
+    border-color: var(--color-text-muted);
+}
+
+.day-dot-current {
+    background-color: transparent;
+    border: clamp(1px, 0.3vh, 2px) solid var(--color-text);
+    box-shadow: 0 0 0 clamp(1px, 0.3vh, 2px) rgba(0, 0, 0, 0.1);
+}
+
+.day-dot-current::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(20px, 4vh, 32px);
+    height: clamp(20px, 4vh, 32px);
+    border-radius: 50%;
+    border: clamp(1px, 0.3vh, 2px) solid var(--color-text);
+    opacity: 0.5;
+}
+
+.day-dot-future {
+    background-color: transparent;
+    border: 1px solid #d0d0d0;
 }
 
 /* Utility */
