@@ -822,11 +822,11 @@ const DayCountdown = {
 
     constants: {
         // Countdown tick marks (marking hours of the 24-hour day)
-        TICK_INNER_RADIUS: 0.45,   // Inner radius for tick marks (45% of container)
-        TICK_OUTER_RADIUS: 0.49,   // Outer radius for tick marks (49% of container)
+        TICK_INNER_RADIUS: 0.71,   // Inner radius for tick marks (45% of container)
+        TICK_OUTER_RADIUS: 0.77,   // Outer radius for tick marks (49% of container)
 
         // Progress arc (shows progress through current 24-hour day)
-        ARC_RADIUS: 0.47,          // Arc radius (47% of container)
+        ARC_RADIUS: 0.74,          // Arc radius (47% of container)
 
         // Common
         START_ANGLE: -90,          // 12 o'clock position
@@ -903,10 +903,25 @@ const DayCountdown = {
         const now = DebugTime.now();
         const { latitude, longitude } = Geolocation.location;
 
-        // Calculate previous sunset (yesterday's sunset)
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const prevSunset = getSunset(yesterday, latitude, longitude);
+        // Calculate today's sunset
+        const todaySunset = getSunset(now, latitude, longitude);
+        if (!todaySunset) {
+            return 0;
+        }
+
+        // Determine previous sunset based on current time
+        // If before today's sunset: use yesterday's sunset
+        // If after today's sunset: use today's sunset
+        let prevSunset;
+        if (now < todaySunset) {
+            // Before today's sunset, use yesterday's sunset
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            prevSunset = getSunset(yesterday, latitude, longitude);
+        } else {
+            // After today's sunset, use today's sunset
+            prevSunset = todaySunset;
+        }
 
         if (!prevSunset) {
             return 0;
@@ -1316,11 +1331,28 @@ function init() {
     window.addEventListener('languageChanged', () => {
         updateBadiDateDisplay();
     });
+
+    // Recalculate positions on window resize (debounced)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            DayDots.render();
+            MonthDots.render();
+            DayCountdown.update();
+        }, 100); // Debounce: wait 100ms after resize stops
+    });
 }
 
-// Run when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
+// Run when ALL resources are loaded (CSS, fonts, etc.)
+// This ensures CSS custom properties and media queries are fully computed
+if (document.readyState === 'complete') {
+    // Page already loaded
     init();
+} else {
+    // Wait for full page load (not just DOM ready)
+    window.addEventListener('load', () => {
+        // Use requestAnimationFrame to ensure layout is fully computed
+        requestAnimationFrame(init);
+    });
 }

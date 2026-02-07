@@ -15,24 +15,81 @@
     --property-font-weight: 300;
     --value-font: 'Times New Roman', serif;
 
-    /* Responsive scaling based on viewport height */
-    --scale-factor: clamp(0.7, 1vh, 1.5);
+    /* Design-calibrated responsive scaling */
+    /* Reference viewport: iPhone 16 (393px × 852px) */
 
-    /* Responsive font sizes */
-    --font-label: clamp(8px, 1.5vh, 14px);
-    --font-value: clamp(12px, 2.5vh, 22px);
-    --font-day-number: clamp(50px, 12vh, 150px);
-    --font-body-text: clamp(10px, 2vh, 17px);
+    /* Base scale factor - changes at breakpoints */
+    --scale-multiplier: 1;
 
-    /* Responsive spacing */
-    --spacing-xs: clamp(0.25rem, 0.5vh, 0.5rem);
-    --spacing-sm: clamp(0.25rem, 1vh, 0.75rem);
-    --spacing-md: clamp(0.5rem, 1.5vh, 1rem);
+    /* Typography - calibrated to match design at 852px viewport height */
+    /* Using vmin (smaller of vw/vh) for better aspect ratio handling */
+    --font-label: calc(11px * var(--scale-multiplier));
+    --font-value: calc(19px * var(--scale-multiplier));
+    --font-day-number: calc(120px * var(--scale-multiplier));
+    --font-body-text: calc(15px * var(--scale-multiplier));
 
-    /* Responsive letter spacing */
-    --label-letter-spacing: clamp(1.8px, 0.35vh, 3.2px);
-    --value-letter-spacing: clamp(2.5px, 0.6vh, 5px);
-    --day-letter-spacing: clamp(-4px, -0.8vh, -6px);
+    /* Letter spacing - preserves design proportions */
+    --label-letter-spacing: calc(2.8px * var(--scale-multiplier));
+    --value-letter-spacing: calc(4.5px * var(--scale-multiplier));
+    --day-letter-spacing: calc(-6px * var(--scale-multiplier));
+
+    /* Spacing - explicit gaps matching design */
+    --gap-label-value: calc(4px * var(--scale-multiplier));
+    --gap-small: calc(12px * var(--scale-multiplier));
+    --gap-section: calc(16px * var(--scale-multiplier));
+    --gap-large: calc(24px * var(--scale-multiplier));
+    --gap-value-dots: calc(8px * var(--scale-multiplier));
+
+    /* Day counter dimensions */
+    --day-counter-size: calc(280px * var(--scale-multiplier));
+    --dot-spacing: calc(5px * var(--scale-multiplier));
+
+    /* Dot sizes */
+    --dot-small: calc(8px * var(--scale-multiplier));
+    --dot-current: calc(12px * var(--scale-multiplier));
+    --dot-large-current: calc(16px * var(--scale-multiplier));
+    --dot-ring: calc(32px * var(--scale-multiplier));
+
+    /* Stroke widths */
+    --stroke-thin: calc(2px * var(--scale-multiplier));
+    --stroke-arc: calc(8px * var(--scale-multiplier));
+
+    /* Container padding */
+    --container-padding: calc(24px * var(--scale-multiplier));
+}
+
+/* Responsive scale factors based on VIEWPORT HEIGHT */
+/* This is a vertical app - height matters more than width */
+
+/* Small phones: < 700px height */
+@media (max-height: 699px) {
+    :root {
+        --scale-multiplier: 0.85;
+    }
+}
+
+/* Reference viewport (iPhone 16): 700-900px height */
+/* Default scale-multiplier: 1.0 (already set above) */
+
+/* Tablets: 900-1100px height */
+@media (min-height: 900px) and (max-height: 1100px) {
+    :root {
+        --scale-multiplier: 1.3;
+    }
+}
+
+/* Desktop monitors: 1100-1400px height */
+@media (min-height: 1101px) and (max-height: 1400px) {
+    :root {
+        --scale-multiplier: 1.6;
+    }
+}
+
+/* Large monitors/4K: > 1400px height */
+@media (min-height: 1401px) {
+    :root {
+        --scale-multiplier: 2.2;
+    }
 }
 
 /* Reset */
@@ -61,9 +118,9 @@ body {
     flex-direction: column;
     height: 100vh;
     min-height: 640px;
-    max-width: 400px;
+    max-width: calc(393px * var(--scale-multiplier));
     margin: 0 auto;
-    padding: 0.5rem;
+    padding: 0 var(--container-padding);
     overflow-y: auto;
 }
 
@@ -82,9 +139,9 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    justify-content: space-evenly;
     min-height: 0;
+    padding-top: calc(80px * var(--scale-multiplier));
+    padding-bottom: calc(80px * var(--scale-multiplier));
 }
 
 /* Date Section */
@@ -307,18 +364,18 @@ body {
 /* Language Toggle - Circular Button Style */
 .language-toggle {
     position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    bottom: var(--container-padding);
+    right: var(--container-padding);
     z-index: 100;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    gap: var(--gap-value-dots);
+    padding: 0;
     background: transparent;
     border: none;
     cursor: pointer;
     font-family: var(--value-font);
-    font-size: var(--font-body-text);
+    font-size: calc(14px * var(--scale-multiplier));
     color: var(--color-text);
     transition: opacity 0.2s ease;
 }
@@ -337,10 +394,10 @@ body {
 }
 
 .language-toggle-indicator {
-    width: 16px;
-    height: 16px;
+    width: var(--dot-large-current);
+    height: var(--dot-large-current);
     border-radius: 50%;
-    border: 2px solid var(--color-text);
+    border: var(--stroke-thin) solid var(--color-text);
     background: transparent;
     transition: background-color 0.3s ease;
     flex-shrink: 0;
@@ -356,14 +413,7 @@ body {
     background-color: transparent;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 480px) {
-    .language-toggle {
-        bottom: 1rem;
-        right: 1rem;
-        padding: 0.4rem 0.6rem;
-    }
-}
+/* Mobile responsiveness - no longer needed as we use clamp() */
 
 /* Footer */
 .footer {
@@ -382,9 +432,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: var(--spacing-xs);
-    margin-top: var(--spacing-sm);
-    padding: var(--spacing-xs);
+    gap: var(--dot-spacing);
+    margin-top: var(--gap-value-dots);
     flex-wrap: wrap;
 }
 
@@ -393,15 +442,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.3rem;
-    margin-top: 0.5rem;
-    padding: 0.25rem;
+    gap: var(--dot-spacing);
+    margin-top: var(--gap-value-dots);
     flex-wrap: wrap;
 }
 
 .progress-dot {
-    width: clamp(5px, 0.9vh, 10px);
-    height: clamp(5px, 0.9vh, 10px);
+    width: var(--dot-small);
+    height: var(--dot-small);
     border-radius: 50%;
     background-color: transparent;
     border: 1px solid #ffffff;
@@ -415,11 +463,11 @@ body {
 }
 
 .progress-dot-current {
-    width: clamp(10px, 1.8vh, 18px);
-    height: clamp(10px, 1.8vh, 18px);
+    width: var(--dot-current);
+    height: var(--dot-current);
     background-color: transparent;
-    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
-    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(255, 255, 255, 0.3);
+    border: var(--stroke-thin) solid #ffffff;
+    box-shadow: 0 0 0 var(--stroke-thin) rgba(255, 255, 255, 0.3);
 }
 
 .progress-dot-square {
@@ -434,11 +482,11 @@ body {
 }
 
 .progress-dot-square.progress-dot-current {
-    width: clamp(10px, 1.8vh, 18px);
-    height: clamp(10px, 1.8vh, 18px);
+    width: var(--dot-current);
+    height: var(--dot-current);
     background-color: transparent;
-    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
-    box-shadow: 0 0 0 clamp(1px, 0.2vh, 2px) rgba(255, 255, 255, 0.3);
+    border: var(--stroke-thin) solid #ffffff;
+    box-shadow: 0 0 0 var(--stroke-thin) rgba(255, 255, 255, 0.3);
 }
 
 .progress-dot-hollow {
@@ -449,11 +497,11 @@ body {
 /* Month Section Styling */
 .month-section {
     text-align: center;
-    padding: var(--spacing-sm) var(--spacing-sm);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--gap-label-value);
+    margin-bottom: var(--gap-large);
 }
 
 .month-label {
@@ -478,10 +526,10 @@ body {
 /* Year Section */
 .year-section {
     text-align: center;
-    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-xs);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--gap-label-value);
+    margin-bottom: var(--gap-section);
 }
 
 .year-label {
@@ -506,10 +554,10 @@ body {
 /* Weekday Section */
 .weekday-section {
     text-align: center;
-    padding: var(--spacing-xs) var(--spacing-sm);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--gap-label-value);
+    margin-bottom: var(--gap-section);
 }
 
 .weekday-label {
@@ -534,10 +582,10 @@ body {
 /* Sunset Section */
 .sunset-section {
     text-align: center;
-    padding: var(--spacing-xs) var(--spacing-sm);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--gap-label-value);
+    margin-bottom: var(--gap-section);
 }
 
 .sunset-label {
@@ -563,7 +611,7 @@ body {
 /* Gregorian Section */
 .gregorian-section {
     text-align: center;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    margin-bottom: var(--gap-small);
 }
 
 .gregorian-date {
@@ -580,13 +628,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--spacing-sm) var(--spacing-sm);
+    margin-top: var(--gap-large);
+    margin-bottom: var(--gap-large);
 }
 
 .day-counter {
     position: relative;
-    width: clamp(150px, 32vh, 300px);
-    height: clamp(150px, 32vh, 300px);
+    width: var(--day-counter-size);
+    height: var(--day-counter-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -614,8 +663,8 @@ body {
 
 .day-dot {
     position: absolute;
-    width: clamp(8px, 1.8vh, 16px);
-    height: clamp(8px, 1.8vh, 16px);
+    width: var(--dot-current);
+    height: var(--dot-current);
     border-radius: 50%;
     background-color: transparent;
     border: 1px solid #ffffff;
@@ -628,9 +677,11 @@ body {
 }
 
 .day-dot-current {
+    width: var(--dot-large-current);
+    height: var(--dot-large-current);
     background-color: transparent;
-    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
-    box-shadow: 0 0 0 clamp(1px, 0.3vh, 2px) rgba(255, 255, 255, 0.3);
+    border: var(--stroke-thin) solid #ffffff;
+    box-shadow: 0 0 0 var(--stroke-thin) rgba(255, 255, 255, 0.3);
 }
 
 .day-dot-current::after {
@@ -639,10 +690,10 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: clamp(20px, 4vh, 32px);
-    height: clamp(20px, 4vh, 32px);
+    width: var(--dot-ring);
+    height: var(--dot-ring);
     border-radius: 50%;
-    border: clamp(1px, 0.3vh, 2px) solid #ffffff;
+    border: var(--stroke-thin) solid #ffffff;
     opacity: 0.5;
 }
 
@@ -665,7 +716,7 @@ body {
 /* Countdown tick marks (static guides) */
 .countdown-ticks line {
     stroke: rgba(255, 255, 255, 0.5);
-    stroke-width: 2;
+    stroke-width: var(--stroke-thin);
     stroke-linecap: round;
     opacity: 0.8;
 }
@@ -673,10 +724,9 @@ body {
 /* Progress arc (animated) */
 .progress-arc {
     stroke: #ffffff;
-    stroke-width: clamp(6px, 1.5vh, 10px);
+    stroke-width: var(--stroke-arc);
     stroke-linecap: round;
     fill: none;
-    opacity: 0.8;
     transition: d 1s ease;
 }
 
