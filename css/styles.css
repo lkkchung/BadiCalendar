@@ -317,7 +317,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-family: var(--property-font);
+    font-family: var(--value-font);
     font-size: var(--font-body-text);
     color: var(--color-text);
     transition: opacity 0.2s ease;
@@ -328,12 +328,11 @@ body {
 }
 
 .language-toggle:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
+    outline: none;
 }
 
 .language-toggle-text {
-    font-weight: 300;
+    font-weight: 400;
     white-space: nowrap;
 }
 
