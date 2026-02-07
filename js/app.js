@@ -823,16 +823,16 @@ const DayCountdown = {
     },
 
     constants: {
-        // Countdown tick marks (small dashes BETWEEN day dots)
+        // Countdown tick marks (marking hours of the 24-hour day)
         TICK_INNER_RADIUS: 0.40,   // Inner radius for tick marks (40% of container)
         TICK_OUTER_RADIUS: 0.44,   // Outer radius for tick marks (44% of container)
 
-        // Progress arc (matches day dot radius, does NOT interfere with dots)
+        // Progress arc (shows progress through current 24-hour day)
         ARC_RADIUS: 0.475,         // Same as day dots (47.5% of container)
 
         // Common
         START_ANGLE: -90,          // 12 o'clock position
-        TICKS_PER_DAY: 4           // 4 tick marks per day (every 6 hours)
+        TOTAL_TICKS: 24            // 24 tick marks total (one per hour)
     },
 
     init() {
@@ -853,7 +853,8 @@ const DayCountdown = {
         // Re-render on events
         window.addEventListener('sunsetUpdated', () => this.update());
         window.addEventListener('badiDayChanged', () => {
-            this.renderTicks();
+            // Ticks are always 24, no need to re-render
+            // Just update the arc (resets to 0% at sunset)
             this.update();
         });
     },
@@ -864,12 +865,8 @@ const DayCountdown = {
         // Clear existing ticks
         this.elements.ticksGroup.innerHTML = '';
 
-        const gregorianDate = DebugTime.now();
-        const periodInfo = getCurrentDayInPeriod(gregorianDate);
-        const totalDaysInPeriod = periodInfo.totalDaysInPeriod;
-
-        // Calculate total ticks (24 per day)
-        const totalTicks = totalDaysInPeriod * this.constants.TICKS_PER_DAY;
+        // Always render exactly 24 tick marks (one per hour of the day)
+        const totalTicks = this.constants.TOTAL_TICKS;
         const degreesPerTick = 360 / totalTicks;
         const centerX = 100; // viewBox center
         const centerY = 100; // viewBox center
