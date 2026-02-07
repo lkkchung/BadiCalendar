@@ -29,7 +29,21 @@
       "Bash(start index.html)",
       "Bash(wc:*)",
       "Bash(bd blocked:*)",
-      "Bash(bd hooks:*)"
+      "Bash(bd hooks:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run:*)",
+      "Bash(python -m http.server:*)",
+      "Bash(timeout 2 bash -c 'sleep 1 && curl -s -o /dev/null -w \"\"%{http_code}\"\" http://localhost:8000')",
+      "mcp__figma-desktop__get_design_context",
+      "mcp__figma-desktop__get_screenshot",
+      "mcp__figma-desktop__get_metadata",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(pkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(start:*)",
+      "Bash(git pull:*)"
     ]
   }
 }

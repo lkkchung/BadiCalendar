@@ -12,6 +12,7 @@ Persona files are located in `/personas/` - load only the one needed to minimize
 
 This project uses **bd (beads)** for issue tracking.
 Run `bd prime` for workflow context, or install hooks (`bd hooks install`) for auto-injection.
+Reference visual comps in the `/designs/` folder
 
 **Quick reference:**
 - `bd ready` - Find unblocked work
