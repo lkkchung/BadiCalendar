@@ -13,18 +13,10 @@
 <body>
     <div class="app-container">
         <!-- Arabic Names Toggle (bottom-right) -->
-        <div class="language-toggle" role="group" aria-label="Language selection">
-            <label class="language-toggle-label">
-                <input
-                    type="checkbox"
-                    id="language-toggle-input"
-                    class="language-toggle-input"
-                    aria-label="Toggle English translation"
-                >
-                <span class="language-toggle-slider"></span>
-                <span class="language-option" data-lang="english">English translation</span>
-            </label>
-        </div>
+        <button class="language-toggle" id="language-toggle-btn" aria-label="Toggle between Arabic and English names">
+            <span class="language-toggle-indicator"></span>
+            <span class="language-toggle-text" id="language-toggle-text">Arabic Names</span>
+        </button>
 
         <main class="main-content">
             <!-- Year -->
