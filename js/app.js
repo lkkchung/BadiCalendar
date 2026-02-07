@@ -1,6 +1,6 @@
 // Badí' Calendar Application
 import { getCurrentBadiDate, getCurrentDayInPeriod } from './badiDate.js';
-import { getNextSunset, formatTime } from './suncalc.js';
+import { getNextSunset, getSunset, formatTime } from './suncalc.js';
 
 /**
  * Language Preference module - manages language state and persistence
@@ -20,14 +20,16 @@ const LanguagePreference = {
 
     // DOM elements
     elements: {
-        toggleInput: null
+        toggleBtn: null,
+        toggleText: null
     },
 
     /**
      * Initialize language preference module
      */
     init() {
-        this.elements.toggleInput = document.getElementById('language-toggle-input');
+        this.elements.toggleBtn = document.getElementById('language-toggle-btn');
+        this.elements.toggleText = document.getElementById('language-toggle-text');
 
         // Load saved preference or default to Arabic
         this.currentLanguage = this.loadPreference() || this.LANGUAGES.ARABIC;
@@ -35,10 +37,11 @@ const LanguagePreference = {
         // Update toggle UI to match saved preference
         this.updateToggleUI();
 
-        // Set up event listener for toggle changes
-        if (this.elements.toggleInput) {
-            this.elements.toggleInput.addEventListener('change', (e) => {
-                const newLanguage = e.target.checked
+        // Set up event listener for toggle button clicks
+        if (this.elements.toggleBtn) {
+            this.elements.toggleBtn.addEventListener('click', () => {
+                // Toggle between Arabic and English
+                const newLanguage = this.currentLanguage === this.LANGUAGES.ARABIC
                     ? this.LANGUAGES.ENGLISH
                     : this.LANGUAGES.ARABIC;
                 this.setLanguage(newLanguage);
@@ -78,8 +81,16 @@ const LanguagePreference = {
      * Update toggle UI to match current language
      */
     updateToggleUI() {
-        if (this.elements.toggleInput) {
-            this.elements.toggleInput.checked = (this.currentLanguage === this.LANGUAGES.ENGLISH);
+        if (this.elements.toggleBtn) {
+            // Update data attribute for CSS styling
+            this.elements.toggleBtn.setAttribute('data-lang', this.currentLanguage);
+        }
+
+        if (this.elements.toggleText) {
+            // Update button text
+            this.elements.toggleText.textContent = this.currentLanguage === this.LANGUAGES.ARABIC
+                ? 'Arabic Names'
+                : 'English Names';
         }
     },
 
@@ -821,7 +832,7 @@ const DayCountdown = {
 
         // Common
         START_ANGLE: -90,          // 12 o'clock position
-        TICKS_PER_DAY: 24          // 24 tick marks per day (hourly indicators)
+        TICKS_PER_DAY: 4           // 4 tick marks per day (every 6 hours)
     },
 
     init() {
@@ -890,17 +901,26 @@ const DayCountdown = {
 
     calculateProgress() {
         const nextSunset = Sunset.getNextSunset();
-        if (!nextSunset) {
+        if (!nextSunset || !Geolocation.location) {
             return 0;
         }
 
         const now = DebugTime.now();
+        const { latitude, longitude } = Geolocation.location;
+
+        // Calculate previous sunset (yesterday's sunset)
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const prevSunset = getSunset(yesterday, latitude, longitude);
+
+        if (!prevSunset) {
+            return 0;
+        }
+
+        const prevSunsetTime = prevSunset.getTime();
         const nextSunsetTime = nextSunset.getTime();
 
-        // Calculate previous sunset (24 hours before next sunset)
-        const prevSunsetTime = nextSunsetTime - (24 * 60 * 60 * 1000);
-
-        // Calculate elapsed time
+        // Calculate elapsed time from previous sunset to now
         const elapsed = now.getTime() - prevSunsetTime;
         const total = nextSunsetTime - prevSunsetTime;
 
@@ -945,22 +965,13 @@ const DayCountdown = {
             return;
         }
 
-        const gregorianDate = DebugTime.now();
-        const periodInfo = getCurrentDayInPeriod(gregorianDate);
-        const dayInPeriod = periodInfo.dayInPeriod;
-        const totalDaysInPeriod = periodInfo.totalDaysInPeriod;
-
         // Calculate progress through current day (0.0 to 1.0)
         const progress = this.calculateProgress();
 
-        // Calculate angles
-        const degreesPerDay = 360 / totalDaysInPeriod;
-
-        // Current day starts at this angle
-        const currentDayStartAngle = this.constants.START_ANGLE + (degreesPerDay * (dayInPeriod - 1));
-
-        // Arc ends at current position + progress through the day
-        const arcEndAngle = currentDayStartAngle + (degreesPerDay * progress);
+        // Arc starts at top of circle (START_ANGLE = -90°)
+        // and extends clockwise based on progress (0-100% = 0-360°)
+        const startAngle = this.constants.START_ANGLE;
+        const endAngle = startAngle + (360 * progress);
 
         // Generate arc path
         const centerX = 100;
@@ -968,7 +979,7 @@ const DayCountdown = {
         const viewBoxSize = 200;
         const radius = this.constants.ARC_RADIUS * viewBoxSize / 2;
 
-        const arcPath = this.createArcPath(centerX, centerY, radius, currentDayStartAngle, arcEndAngle);
+        const arcPath = this.createArcPath(centerX, centerY, radius, startAngle, endAngle);
         this.elements.progressArc.setAttribute('d', arcPath);
     },
 

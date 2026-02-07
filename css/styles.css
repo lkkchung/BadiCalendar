@@ -304,148 +304,65 @@ body {
     opacity: 0.9;
 }
 
-/* Language Toggle */
+/* Language Toggle - Circular Button Style */
 .language-toggle {
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;
     z-index: 100;
-}
-
-.language-toggle-label {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
     cursor: pointer;
-    user-select: none;
-    padding: 0.75rem 1rem;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
+    font-family: var(--property-font);
+    font-size: var(--font-body-text);
+    color: var(--color-text);
+    transition: opacity 0.2s ease;
 }
 
-.language-toggle-label:hover {
-    background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+.language-toggle:hover {
+    opacity: 0.8;
 }
 
-.language-option {
-    font-size: var(--font-size-small);
-    font-weight: 500;
-    color: #ffffff;
-    transition: all 0.3s ease;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+.language-toggle:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
 }
 
-.language-toggle-input {
-    position: relative;
-    appearance: none;
-    width: 52px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-    flex-shrink: 0;
-    margin-right: 0.5rem;
+.language-toggle-text {
+    font-weight: 300;
+    white-space: nowrap;
 }
 
-.language-toggle-input:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.language-toggle-input:checked {
-    background: #ffffff;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.language-toggle-input:checked:hover {
-    background: #ffffff;
-}
-
-/* Focus state for accessibility */
-.language-toggle-input:focus {
-    outline: none;
-    box-shadow:
-        inset 0 1px 3px rgba(0, 0, 0, 0.15),
-        0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.language-toggle-input:focus-visible {
-    box-shadow:
-        inset 0 1px 3px rgba(0, 0, 0, 0.15),
-        0 0 0 3px rgba(0, 0, 0, 0.2);
-}
-
-.language-toggle-slider {
-    position: absolute;
-    width: 52px;
-    height: 28px;
-    pointer-events: none;
-    left: 0.5rem;
-}
-
-.language-toggle-slider::before {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    background: #ffffff;
+.language-toggle-indicator {
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--color-text);
+    background: transparent;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
 }
 
-.language-toggle-input:checked + .language-toggle-slider::before {
-    transform: translateX(24px);
+/* When showing Arabic names (default state), indicator is filled */
+.language-toggle[data-lang="arabic"] .language-toggle-indicator {
+    background-color: var(--color-text);
 }
 
-/* Hover effect on slider knob */
-.language-toggle-input:hover + .language-toggle-slider::before {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* Highlight when English is active */
-.language-toggle-input:checked ~ .language-option[data-lang="english"] {
-    color: #ffffff;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.2);
+/* When showing English names, indicator is hollow */
+.language-toggle[data-lang="english"] .language-toggle-indicator {
+    background-color: transparent;
 }
 
 /* Mobile responsiveness */
 @media (max-width: 480px) {
-    .language-toggle-label {
-        gap: 0.5rem;
-    }
-
-    .language-option {
-        font-size: 0.8rem;
-    }
-
-    .language-toggle-input {
-        width: 48px;
-        height: 26px;
-    }
-
-    .language-toggle-slider {
-        width: 48px;
-        height: 26px;
-    }
-
-    .language-toggle-slider::before {
-        width: 20px;
-        height: 20px;
-    }
-
-    .language-toggle-input:checked + .language-toggle-slider::before {
-        transform: translateX(22px);
+    .language-toggle {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.4rem 0.6rem;
     }
 }
 
@@ -748,10 +665,10 @@ body {
 
 /* Countdown tick marks (static guides) */
 .countdown-ticks line {
-    stroke: rgba(255, 255, 255, 0.3);
-    stroke-width: 1.5;
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2;
     stroke-linecap: round;
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 /* Progress arc (animated) */
