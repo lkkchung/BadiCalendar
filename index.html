@@ -40,9 +40,6 @@
                 <div class="month-dots" id="month-dots" aria-label="Months in year">
                     <!-- Month progression dots will be dynamically inserted here -->
                 </div>
-                <div class="progress-dots" id="progress-dots" aria-label="Days in period">
-                    <!-- Day progress dots will be dynamically inserted here -->
-                </div>
             </section>
 
             <!-- Holy Day Indicator -->
@@ -55,15 +52,18 @@
                 <div class="holy-day-type" id="holy-day-type">--</div>
             </section>
 
-            <!-- Central Circular Countdown with Day Number -->
-            <section class="countdown-section" aria-label="Sunset Countdown">
-                <div class="countdown-circle" id="countdown-circle">
-                    <svg class="countdown-ring" viewBox="0 0 200 200" aria-hidden="true">
-                        <circle class="countdown-ring-background" cx="100" cy="100" r="90" />
-                        <circle class="countdown-ring-progress" cx="100" cy="100" r="90" id="countdown-ring-path" />
+            <!-- Day Counter with Circular Dots -->
+            <section class="day-counter-section" aria-label="Day Counter">
+                <div class="day-counter" id="day-counter">
+                    <svg class="day-countdown-svg" id="day-countdown-svg" viewBox="0 0 200 200" aria-hidden="true">
+                        <!-- Countdown tick marks (static) -->
+                        <g id="countdown-ticks" class="countdown-ticks"></g>
+                        <!-- Progress arc (animated) -->
+                        <path id="progress-arc" class="progress-arc" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" d=""/>
                     </svg>
-                    <div class="countdown-center">
-                        <div class="day-number" id="day">--</div>
+                    <div class="day-number" id="day">--</div>
+                    <div class="day-dots" id="day-dots" aria-label="Days in period">
+                        <!-- Day dots will be dynamically inserted here -->
                     </div>
                 </div>
             </section>

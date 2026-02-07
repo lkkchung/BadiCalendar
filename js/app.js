@@ -718,116 +718,265 @@ const Sunset = {
 export { Sunset };
 
 /**
- * Countdown module - handles countdown timer to next sunset
+ * DayDots module - handles circular day indicator dots around the day number
  */
-const Countdown = {
-    // Target sunset time
-    targetSunset: null,
-
-    // Interval ID for the timer
-    intervalId: null,
-
+const DayDots = {
     // DOM elements
     elements: {
-        hours: null,
-        minutes: null,
-        seconds: null
+        container: null
     },
 
     /**
-     * Initialize countdown module
+     * Initialize day dots module
      */
     init() {
-        this.elements.hours = document.getElementById('countdown-hours');
-        this.elements.minutes = document.getElementById('countdown-minutes');
-        this.elements.seconds = document.getElementById('countdown-seconds');
-
-        // Listen for sunset updates
-        window.addEventListener('sunsetUpdated', (e) => {
-            this.setTarget(e.detail.sunset);
-        });
-
-        // Check if sunset already available
-        const sunset = Sunset.getNextSunset();
-        if (sunset) {
-            this.setTarget(sunset);
-        }
+        this.elements.container = document.getElementById('day-dots');
     },
 
     /**
-     * Set the countdown target
-     * @param {Date} sunset
+     * Render day dots in circular arrangement
      */
-    setTarget(sunset) {
-        this.targetSunset = sunset;
+    render() {
+        if (!this.elements.container) return;
 
-        // Clear existing interval
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
+        // Determine correct Gregorian date for Bahá'í calculation
+        const gregorianDate = DebugTime.now();
+        const nextSunset = Sunset.getNextSunset();
+
+        // If nextSunset is tomorrow, we've passed today's sunset
+        if (nextSunset) {
+            const today = DebugTime.now();
+            today.setHours(0, 0, 0, 0);
+            const sunsetDay = new Date(nextSunset);
+            sunsetDay.setHours(0, 0, 0, 0);
+
+            // Sunset is tomorrow → increment date by 1 day
+            if (sunsetDay > today) {
+                gregorianDate.setDate(gregorianDate.getDate() + 1);
+            }
         }
 
-        // Update immediately and start interval
-        this.update();
-        this.intervalId = setInterval(() => this.update(), 1000);
-    },
+        const periodInfo = getCurrentDayInPeriod(gregorianDate);
+        const { dayInPeriod, totalDaysInPeriod } = periodInfo;
 
-    /**
-     * Update the countdown display
-     */
-    update() {
-        if (!this.targetSunset) {
-            this.displayTime(0, 0, 0);
-            return;
-        }
+        // Clear existing dots
+        this.elements.container.innerHTML = '';
 
-        const now = DebugTime.now();
-        const diff = this.targetSunset.getTime() - now.getTime();
+        // Calculate circular positions for dots (47.5% of container size for radius)
+        const containerSize = this.elements.container.parentElement.offsetWidth;
+        const radius = containerSize * 0.475; // 47.5% of container for radius
+        const centerX = containerSize / 2; // Center X
+        const centerY = containerSize / 2; // Center Y
+        const startAngle = -90; // Start at top (12 o'clock position)
 
-        if (diff <= 0) {
-            // Sunset has passed - request new sunset calculation
-            this.displayTime(0, 0, 0);
-            window.dispatchEvent(new CustomEvent('sunsetPassed'));
-            return;
-        }
+        // Create dots for current period
+        for (let i = 1; i <= totalDaysInPeriod; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'day-dot';
 
-        const totalSeconds = Math.floor(diff / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+            // Determine dot state
+            if (i < dayInPeriod) {
+                dot.classList.add('day-dot-previous');
+            } else if (i === dayInPeriod) {
+                dot.classList.add('day-dot-current');
+            } else {
+                dot.classList.add('day-dot-future');
+            }
 
-        this.displayTime(hours, minutes, seconds);
-    },
+            // Calculate position in circle
+            const angle = startAngle + (360 / totalDaysInPeriod) * (i - 1);
+            const radian = (angle * Math.PI) / 180;
+            const x = centerX + radius * Math.cos(radian);
+            const y = centerY + radius * Math.sin(radian);
 
-    /**
-     * Display time values in the UI
-     * @param {number} hours
-     * @param {number} minutes
-     * @param {number} seconds
-     */
-    displayTime(hours, minutes, seconds) {
-        if (this.elements.hours) {
-            this.elements.hours.textContent = String(hours).padStart(2, '0');
-        }
-        if (this.elements.minutes) {
-            this.elements.minutes.textContent = String(minutes).padStart(2, '0');
-        }
-        if (this.elements.seconds) {
-            this.elements.seconds.textContent = String(seconds).padStart(2, '0');
-        }
-    },
+            // Position the dot
+            dot.style.left = `${x}px`;
+            dot.style.top = `${y}px`;
+            dot.style.transform = 'translate(-50%, -50%)';
 
-    /**
-     * Stop the countdown
-     */
-    stop() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
+            dot.setAttribute('aria-label', `Day ${i} of ${totalDaysInPeriod}`);
+            this.elements.container.appendChild(dot);
         }
     }
 };
 
-export { Countdown };
+export { DayDots };
+
+/**
+ * DayCountdown module - renders SVG countdown with tick marks and progress arc
+ */
+const DayCountdown = {
+    elements: {
+        ticksGroup: null,
+        progressArc: null
+    },
+
+    constants: {
+        // Countdown tick marks (small dashes BETWEEN day dots)
+        TICK_INNER_RADIUS: 0.40,   // Inner radius for tick marks (40% of container)
+        TICK_OUTER_RADIUS: 0.44,   // Outer radius for tick marks (44% of container)
+
+        // Progress arc (matches day dot radius, does NOT interfere with dots)
+        ARC_RADIUS: 0.475,         // Same as day dots (47.5% of container)
+
+        // Common
+        START_ANGLE: -90,          // 12 o'clock position
+        TICKS_PER_DAY: 24          // 24 tick marks per day (hourly indicators)
+    },
+
+    init() {
+        this.elements.ticksGroup = document.getElementById('countdown-ticks');
+        this.elements.progressArc = document.getElementById('progress-arc');
+
+        if (!this.elements.ticksGroup || !this.elements.progressArc) {
+            console.warn('DayCountdown: SVG elements not found');
+            return;
+        }
+
+        // Render static ticks once
+        this.renderTicks();
+
+        // Start progress arc updates
+        this.startUpdateInterval();
+
+        // Re-render on events
+        window.addEventListener('sunsetUpdated', () => this.update());
+        window.addEventListener('badiDayChanged', () => {
+            this.renderTicks();
+            this.update();
+        });
+    },
+
+    renderTicks() {
+        if (!this.elements.ticksGroup) return;
+
+        // Clear existing ticks
+        this.elements.ticksGroup.innerHTML = '';
+
+        const gregorianDate = DebugTime.now();
+        const periodInfo = getCurrentDayInPeriod(gregorianDate);
+        const totalDaysInPeriod = periodInfo.totalDaysInPeriod;
+
+        // Calculate total ticks (24 per day)
+        const totalTicks = totalDaysInPeriod * this.constants.TICKS_PER_DAY;
+        const degreesPerTick = 360 / totalTicks;
+        const centerX = 100; // viewBox center
+        const centerY = 100; // viewBox center
+        const viewBoxSize = 200;
+
+        for (let i = 0; i < totalTicks; i++) {
+            const angle = this.constants.START_ANGLE + (degreesPerTick * i);
+            const angleRad = (angle * Math.PI) / 180;
+
+            // Calculate inner and outer points
+            const innerRadius = this.constants.TICK_INNER_RADIUS * viewBoxSize / 2;
+            const outerRadius = this.constants.TICK_OUTER_RADIUS * viewBoxSize / 2;
+
+            const x1 = centerX + innerRadius * Math.cos(angleRad);
+            const y1 = centerY + innerRadius * Math.sin(angleRad);
+            const x2 = centerX + outerRadius * Math.cos(angleRad);
+            const y2 = centerY + outerRadius * Math.sin(angleRad);
+
+            // Create tick line
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+
+            this.elements.ticksGroup.appendChild(line);
+        }
+    },
+
+    calculateProgress() {
+        const nextSunset = Sunset.getNextSunset();
+        if (!nextSunset) {
+            return 0;
+        }
+
+        const now = DebugTime.now();
+        const nextSunsetTime = nextSunset.getTime();
+
+        // Calculate previous sunset (24 hours before next sunset)
+        const prevSunsetTime = nextSunsetTime - (24 * 60 * 60 * 1000);
+
+        // Calculate elapsed time
+        const elapsed = now.getTime() - prevSunsetTime;
+        const total = nextSunsetTime - prevSunsetTime;
+
+        // Calculate progress (0.0 to 1.0)
+        const progress = Math.max(0, Math.min(1, elapsed / total));
+
+        return progress;
+    },
+
+    createArcPath(centerX, centerY, radius, startAngleDeg, endAngleDeg) {
+        // Convert angles to radians
+        const startAngleRad = (startAngleDeg * Math.PI) / 180;
+        const endAngleRad = (endAngleDeg * Math.PI) / 180;
+
+        // Calculate start and end points
+        const startX = centerX + radius * Math.cos(startAngleRad);
+        const startY = centerY + radius * Math.sin(startAngleRad);
+        const endX = centerX + radius * Math.cos(endAngleRad);
+        const endY = centerY + radius * Math.sin(endAngleRad);
+
+        // Determine if we need the large arc flag
+        let angleDiff = endAngleDeg - startAngleDeg;
+        if (angleDiff < 0) angleDiff += 360;
+        const largeArcFlag = angleDiff > 180 ? 1 : 0;
+
+        // Create SVG arc path
+        const path = [
+            `M ${startX} ${startY}`,
+            `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY}`
+        ].join(' ');
+
+        return path;
+    },
+
+    update() {
+        if (!this.elements.progressArc) return;
+
+        const nextSunset = Sunset.getNextSunset();
+        if (!nextSunset) {
+            // No sunset data, hide the arc
+            this.elements.progressArc.setAttribute('d', '');
+            return;
+        }
+
+        const gregorianDate = DebugTime.now();
+        const periodInfo = getCurrentDayInPeriod(gregorianDate);
+        const dayInPeriod = periodInfo.dayInPeriod;
+        const totalDaysInPeriod = periodInfo.totalDaysInPeriod;
+
+        // Calculate progress through current day (0.0 to 1.0)
+        const progress = this.calculateProgress();
+
+        // Calculate angles
+        const degreesPerDay = 360 / totalDaysInPeriod;
+
+        // Current day starts at this angle
+        const currentDayStartAngle = this.constants.START_ANGLE + (degreesPerDay * (dayInPeriod - 1));
+
+        // Arc ends at current position + progress through the day
+        const arcEndAngle = currentDayStartAngle + (degreesPerDay * progress);
+
+        // Generate arc path
+        const centerX = 100;
+        const centerY = 100;
+        const viewBoxSize = 200;
+        const radius = this.constants.ARC_RADIUS * viewBoxSize / 2;
+
+        const arcPath = this.createArcPath(centerX, centerY, radius, currentDayStartAngle, arcEndAngle);
+        this.elements.progressArc.setAttribute('d', arcPath);
+    },
+
+    startUpdateInterval() {
+        this.update();
+        setInterval(() => this.update(), 1000);
+    }
+};
 
 /**
  * MonthDots module - renders month progression dots for the year (20 dots total)
@@ -1079,7 +1228,7 @@ function updateBadiDateDisplay() {
 
     // Update month and day dots
     MonthDots.render();
-    ProgressDots.render();
+    DayDots.render();
 }
 
 /**
@@ -1143,9 +1292,9 @@ function init() {
     LanguagePreference.init();
     Geolocation.init();
     Sunset.init();
-    Countdown.init();
+    DayDots.init();
+    DayCountdown.init();
     MonthDots.init();
-    ProgressDots.init();
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
     startTimeUpdater();
@@ -1154,6 +1303,7 @@ function init() {
     // Listen for Bahá'í day change (at sunset)
     window.addEventListener('badiDayChanged', () => {
         updateBadiDateDisplay();
+        DayCountdown.update();
     });
 
     // Listen for language preference changes
