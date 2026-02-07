@@ -822,11 +822,11 @@ const DayCountdown = {
 
     constants: {
         // Countdown tick marks (marking hours of the 24-hour day)
-        TICK_INNER_RADIUS: 0.40,   // Inner radius for tick marks (40% of container)
-        TICK_OUTER_RADIUS: 0.44,   // Outer radius for tick marks (44% of container)
+        TICK_INNER_RADIUS: 0.46,   // Inner radius for tick marks (46% of container)
+        TICK_OUTER_RADIUS: 0.50,   // Outer radius for tick marks (50% of container)
 
         // Progress arc (shows progress through current 24-hour day)
-        ARC_RADIUS: 0.475,         // Same as day dots (47.5% of container)
+        ARC_RADIUS: 0.48,          // Arc radius (48% of container)
 
         // Common
         START_ANGLE: -90,          // 12 o'clock position
