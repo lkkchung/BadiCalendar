@@ -87,10 +87,8 @@ const LanguagePreference = {
         }
 
         if (this.elements.toggleText) {
-            // Update button text
-            this.elements.toggleText.textContent = this.currentLanguage === this.LANGUAGES.ARABIC
-                ? 'Arabic Names'
-                : 'English Names';
+            // Button text always says "Arabic Names"
+            this.elements.toggleText.textContent = 'Arabic Names';
         }
     },
 
