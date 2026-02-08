@@ -98,6 +98,9 @@ function createAnimatedBlob(config, id) {
     const path3 = generateBlobPath(4, morph);
     const path4 = generateBlobPath(6, morph);
 
+    // Set initial path so blob is visible immediately
+    path.setAttribute("d", path1);
+
     const animate = document.createElementNS("http://www.w3.org/2000/svg", "animate");
     animate.setAttribute("attributeName", "d");
     animate.setAttribute("dur", `${duration}s`);
