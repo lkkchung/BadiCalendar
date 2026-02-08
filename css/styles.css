@@ -102,7 +102,7 @@
 body {
     font-family: var(--font-stack);
     font-size: var(--font-size-body);
-    background-color: var(--color-background);
+    background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
     color: var(--color-text);
     line-height: 1.5;
     height: 100vh;
@@ -110,6 +110,24 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    position: relative;
+}
+
+/* Plasma Background Container */
+#plasma-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.plasma-blob {
+    will-change: transform, opacity;
+}
+
+.plasma-ambient {
+    will-change: filter;
 }
 
 /* Layout */
@@ -122,6 +140,8 @@ body {
     margin: 0 auto;
     padding: 0 var(--container-padding);
     overflow-y: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .header {
@@ -366,7 +386,7 @@ body {
     position: fixed;
     bottom: var(--container-padding);
     right: var(--container-padding);
-    z-index: 100;
+    z-index: 10;
     display: flex;
     align-items: center;
     gap: var(--gap-value-dots);

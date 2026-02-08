@@ -1,6 +1,7 @@
 // Badí' Calendar Application
 import { getCurrentBadiDate, getCurrentDayInPeriod } from './badiDate.js';
 import { getNextSunset, getSunset, formatTime } from './suncalc.js';
+import { initPlasmaBackground, updatePlasmaColors } from './plasma-background.js';
 
 /**
  * Language Preference module - manages language state and persistence
@@ -1250,6 +1251,12 @@ function updateBadiDateDisplay() {
     // Update month and day dots
     MonthDots.render();
     DayDots.render();
+
+    // Update plasma background colors based on current date
+    updatePlasmaColors({
+        month: badiDate.month,
+        day: badiDate.day
+    });
 }
 
 /**
@@ -1316,6 +1323,15 @@ function init() {
     DayDots.init();
     DayCountdown.init();
     MonthDots.init();
+
+    // Initialize plasma background
+    const gregorianDate = DebugTime.now();
+    const badiDate = getCurrentBadiDate(gregorianDate);
+    initPlasmaBackground({
+        month: badiDate.month,
+        day: badiDate.day
+    });
+
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
     startTimeUpdater();
