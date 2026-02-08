@@ -1323,15 +1323,6 @@ function init() {
     DayDots.init();
     DayCountdown.init();
     MonthDots.init();
-
-    // Initialize plasma background
-    const gregorianDate = DebugTime.now();
-    const badiDate = getCurrentBadiDate(gregorianDate);
-    initPlasmaBackground({
-        month: badiDate.month,
-        day: badiDate.day
-    });
-
     updateBadiDateDisplay();
     updateGregorianDateDisplay();
     startTimeUpdater();
@@ -1357,6 +1348,26 @@ function init() {
             MonthDots.render();
             DayCountdown.update();
         }, 100); // Debounce: wait 100ms after resize stops
+    });
+}
+
+// Initialize plasma background as early as possible (DOM ready)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const gregorianDate = new Date();
+        const badiDate = getCurrentBadiDate(gregorianDate);
+        initPlasmaBackground({
+            month: badiDate.month,
+            day: badiDate.day
+        });
+    });
+} else {
+    // DOM already ready
+    const gregorianDate = new Date();
+    const badiDate = getCurrentBadiDate(gregorianDate);
+    initPlasmaBackground({
+        month: badiDate.month,
+        day: badiDate.day
     });
 }
 
