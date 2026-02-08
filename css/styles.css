@@ -7,7 +7,7 @@
     --color-surface: #555555;
     --color-text: #ffffff;
     --color-text-muted: #ffffff;
-    --color-border: #777777;
+    --color-border: #ffffff;
     --font-stack: Arial, sans-serif;
 
     /* Typography tokens */
@@ -48,10 +48,11 @@
     --dot-small: calc(8px * var(--scale-multiplier));
     --dot-current: calc(12px * var(--scale-multiplier));
     --dot-large-current: calc(16px * var(--scale-multiplier));
-    --dot-ring: calc(32px * var(--scale-multiplier));
+    --dot-ring: calc(20px * var(--scale-multiplier));
 
     /* Stroke widths */
     --stroke-thin: calc(2px * var(--scale-multiplier));
+    --stroke-thick: calc(3px * var(--scale-multiplier));
     --stroke-arc: calc(8px * var(--scale-multiplier));
 
     /* Container padding */
@@ -120,6 +121,12 @@ body {
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+}
+
+#plasma-background.loaded {
+    opacity: 1;
 }
 
 .plasma-blob {
@@ -309,9 +316,9 @@ body {
 
 /* Location Section */
 .location-section {
-    background: var(--color-surface);
+    background: transparent;
     padding: 0.5rem;
-    border: 1px solid var(--color-border);
+    /* border: 1px solid var(--color-border); */
 }
 
 .location-display {
@@ -472,7 +479,7 @@ body {
     height: var(--dot-small);
     border-radius: 50%;
     background-color: transparent;
-    border: 1px solid #ffffff;
+    border: var(--stroke-thin) solid #ffffff;
     transition: all 0.3s ease;
     flex-shrink: 0;
 }
@@ -485,15 +492,16 @@ body {
 .progress-dot-current {
     width: var(--dot-current);
     height: var(--dot-current);
-    background-color: transparent;
+    background-color: #ffffff;
     border: var(--stroke-thin) solid #ffffff;
-    box-shadow: 0 0 0 var(--stroke-thin) rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 var(--stroke-thin) #ffffff;
 }
 
 .progress-dot-square {
-    border-radius: 2px;
-    background-color: #e8e8e8;
-    border: 1px solid #d0d0d0;
+    border-radius: 1px;
+    /* background-color: #e8e8e8; */
+    background-color: transparent;
+    border: var(--stroke-thin) solid #ffffff;
 }
 
 .progress-dot-square.progress-dot-past {
@@ -506,12 +514,12 @@ body {
     height: var(--dot-current);
     background-color: transparent;
     border: var(--stroke-thin) solid #ffffff;
-    box-shadow: 0 0 0 var(--stroke-thin) rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 var(--stroke-thin) #ffffff;
 }
 
 .progress-dot-hollow {
     background-color: transparent;
-    border: 1px solid #ffffff;
+    border: var(--stroke-thin) solid #ffffff;
 }
 
 /* Month Section Styling */
@@ -687,8 +695,8 @@ body {
     height: var(--dot-current);
     border-radius: 50%;
     background-color: transparent;
-    border: 1px solid #ffffff;
-    transition: all 0.3s ease;
+    border: var(--stroke-thin) solid #ffffff;
+    /* transition: all 0.3s ease; */
 }
 
 .day-dot-previous {
@@ -697,11 +705,11 @@ body {
 }
 
 .day-dot-current {
-    width: var(--dot-large-current);
-    height: var(--dot-large-current);
-    background-color: transparent;
+    width: var(--dot-current);
+    height: var(--dot-current);
+    background-color: #ffffff;
     border: var(--stroke-thin) solid #ffffff;
-    box-shadow: 0 0 0 var(--stroke-thin) rgba(255, 255, 255, 0.3);
+    /* box-shadow: 0 0 0 var(--stroke-thin) rgb(255, 255, 255); */
 }
 
 .day-dot-current::after {
@@ -714,12 +722,12 @@ body {
     height: var(--dot-ring);
     border-radius: 50%;
     border: var(--stroke-thin) solid #ffffff;
-    opacity: 0.5;
+    /* opacity: 0.5; */
 }
 
 .day-dot-future {
     background-color: transparent;
-    border: 1px solid #ffffff;
+    border: 2px solid #ffffff;
 }
 
 /* SVG countdown container */
@@ -737,7 +745,7 @@ body {
 .countdown-ticks line {
     stroke: rgba(255, 255, 255, 0.5);
     stroke-width: var(--stroke-thin);
-    stroke-linecap: round;
+    stroke-linecap: butt;
     opacity: 0.8;
 }
 
@@ -747,7 +755,7 @@ body {
     stroke-width: var(--stroke-arc);
     stroke-linecap: round;
     fill: none;
-    transition: d 1s ease;
+    /* transition: d 1s ease; */
 }
 
 /* Utility */

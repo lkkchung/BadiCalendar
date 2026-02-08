@@ -9,13 +9,13 @@ const PALETTE_COLORS = [
 
 // Plasma preset parameters
 const PLASMA_PARAMS = {
-    blobCount: 8,
-    blobSize: 50,
-    blur: 35,
-    speed: 5,
+    blobCount: 3,
+    blobSize: 75,
+    blur: 75,
+    speed: 12,
     morph: 20,
-    baseOpacity: 0.75,
-    grain: 0.05
+    baseOpacity: 0.3,
+    grain: 0.5
 };
 
 function hexToRgb(hex) {
@@ -138,8 +138,9 @@ export function initPlasmaBackground(badiDate) {
         return;
     }
 
-    // Clear existing blobs
+    // Clear existing blobs and remove loaded class for fade-in
     container.innerHTML = '';
+    container.classList.remove('loaded');
 
     const midColor = blendColors(colorA, colorB, 0.5);
 
@@ -194,6 +195,12 @@ export function initPlasmaBackground(badiDate) {
         pointer-events: none;
     `;
     container.appendChild(ambient2);
+
+    // Trigger fade-in after all elements are added
+    // Use setTimeout to ensure elements are rendered first
+    setTimeout(() => {
+        container.classList.add('loaded');
+    }, 50);
 }
 
 export function updatePlasmaColors(badiDate) {
