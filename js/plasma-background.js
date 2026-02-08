@@ -74,7 +74,8 @@ function createAnimatedBlob(config, id) {
     const { color, size, x, y, duration, delay, blur, opacity, morph } = config;
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("viewBox", "-20 -20 140 140");
+    svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
     svg.classList.add("plasma-blob");
     svg.style.cssText = `
         position: absolute;
