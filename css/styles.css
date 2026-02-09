@@ -107,6 +107,7 @@ body {
     color: var(--color-text);
     line-height: 1.5;
     height: 100vh;
+    height: 100svh; /* Small viewport height - accounts for URL bar on mobile */
     min-height: 640px;
     margin: 0;
     padding: 0;
@@ -142,6 +143,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    height: 100svh; /* Small viewport height - accounts for URL bar on mobile */
     min-height: 640px;
     max-width: calc(393px * var(--scale-multiplier));
     margin: 0 auto;
