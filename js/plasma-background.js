@@ -2,9 +2,26 @@
 // Colors map to Badí' months and days (19 each)
 
 const PALETTE_COLORS = [
-  "#FF3300", "#FF6944", "#FF9B83", "#FFC4B6", "#FEE19D", "#FFCC59", "#FFB001",
-  "#1B8DFF", "#83B9FF", "#B9DBFF", "#B6ADFE", "#9284FF",
-  "#ED85D2", "#E467C5", "#CF26A3", "#94EBC9", "#7FCAAC", "#6CAA91", "#C2C2C2"
+  "#FFB000", 
+  "#FF3300", 
+  "#E591D0", 
+  "#9C5CF6", 
+  "#FFE19E", 
+  "#82B9FF", 
+  "#1C8DFF", 
+  "#8AE6C2", 
+  "#C2C2C2", 
+  "#CF27A4", 
+  "#FA6E4B", 
+  "#CAA7FB", 
+  "#3EE6A4",
+  "#FFCC59", 
+  "#B8DBFF", 
+  "#FF9B82", 
+  "#5D46F6", 
+  "#FFC4B5", 
+  "#FFFFFF",
+  "#B8F2DB"
 ];
 
 // Plasma preset parameters
