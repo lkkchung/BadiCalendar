@@ -2,24 +2,24 @@
 // Colors map to Badí' months and days (19 each)
 
 const PALETTE_COLORS = [
-  "#FFB000", 
-  "#FF3300", 
-  "#E591D0", 
-  "#9C5CF6", 
-  "#FFE19E", 
-  "#82B9FF", 
-  "#1C8DFF", 
-  "#8AE6C2", 
-  "#C2C2C2", 
-  "#CF27A4", 
-  "#FA6E4B", 
-  "#CAA7FB", 
+  "#FFB000",
+  "#FF3300",
+  "#E591D0",
+  "#9C5CF6",
+  "#FFE19E",
+  "#82B9FF",
+  "#1C8DFF",
+  "#8AE6C2",
+  "#C2C2C2",
+  "#CF27A4",
+  "#FA6E4B",
+  "#CAA7FB",
   "#3EE6A4",
-  "#FFCC59", 
-  "#B8DBFF", 
-  "#FF9B82", 
-  "#5D46F6", 
-  "#FFC4B5", 
+  "#FFCC59",
+  "#B8DBFF",
+  "#FF9B82",
+  "#5D46F6",
+  "#FFC4B5",
   "#FFFFFF",
   "#B8F2DB"
 ];
@@ -27,12 +27,10 @@ const PALETTE_COLORS = [
 // Plasma preset parameters
 const PLASMA_PARAMS = {
     blobCount: 3,
-    blobSize: 75,
-    blur: 75,
+    blobSize: 110,
+    blur: 50,
     speed: 12,
-    morph: 20,
-    baseOpacity: 0.3,
-    grain: 0.5
+    baseOpacity: 0.3
 };
 
 function hexToRgb(hex) {
@@ -53,92 +51,49 @@ function blendColors(hex1, hex2, ratio) {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-function generateBlobPath(seed, variance) {
-    const points = 8;
-    const angleStep = (Math.PI * 2) / points;
-    const radius = 40;
-
-    const coords = [];
-
-    for (let i = 0; i < points; i++) {
-        const angle = i * angleStep;
-        const r = radius + Math.sin(seed + i * 1.5) * variance;
-        const x = 50 + Math.cos(angle) * r;
-        const y = 50 + Math.sin(angle) * r;
-        coords.push({ x, y });
-    }
-
-    // Create smooth curve through points
-    let path = `M ${coords[0].x},${coords[0].y}`;
-    for (let i = 0; i < coords.length; i++) {
-        const p0 = coords[(i - 1 + coords.length) % coords.length];
-        const p1 = coords[i];
-        const p2 = coords[(i + 1) % coords.length];
-        const p3 = coords[(i + 2) % coords.length];
-
-        const cp1x = p1.x + (p2.x - p0.x) / 6;
-        const cp1y = p1.y + (p2.y - p0.y) / 6;
-        const cp2x = p2.x - (p3.x - p1.x) / 6;
-        const cp2y = p2.y - (p3.y - p1.y) / 6;
-
-        path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
-    }
-    path += " Z";
-    return path;
-}
-
 function createAnimatedBlob(config, id) {
-    const { color, size, x, y, duration, delay, blur, opacity, morph } = config;
+    const { color, size, x, y, duration, delay, blur, opacity } = config;
 
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "-20 -20 140 140");
-    svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
-    svg.classList.add("plasma-blob");
-    svg.style.cssText = `
+    const blob = document.createElement('div');
+    blob.classList.add('plasma-blob');
+    blob.style.cssText = `
         position: absolute;
         width: ${size}%;
         height: ${size}%;
         left: ${x}%;
         top: ${y}%;
         transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: ${color};
         filter: blur(${blur}px);
         opacity: ${opacity};
         mix-blend-mode: screen;
         pointer-events: none;
+        animation: plasma-drift-${id} ${duration}s ease-in-out ${delay}s infinite;
     `;
 
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("fill", color);
+    return blob;
+}
 
-    // Generate morph animation keyframes
-    const path1 = generateBlobPath(0, morph);
-    const path2 = generateBlobPath(2, morph);
-    const path3 = generateBlobPath(4, morph);
-    const path4 = generateBlobPath(6, morph);
-
-    // Set initial path so blob is visible immediately
-    path.setAttribute("d", path1);
-
-    const animate = document.createElementNS("http://www.w3.org/2000/svg", "animate");
-    animate.setAttribute("attributeName", "d");
-    animate.setAttribute("dur", `${duration}s`);
-    animate.setAttribute("repeatCount", "indefinite");
-    animate.setAttribute("begin", `${delay}s`);
-    animate.setAttribute("values", `${path1};${path2};${path3};${path4};${path1}`);
-    animate.setAttribute("calcMode", "spline");
-    animate.setAttribute("keySplines", "0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1");
-
-    path.appendChild(animate);
-    svg.appendChild(path);
-
-    return svg;
+function injectKeyframes(id, dx1, dy1, s1, dx2, dy2, s2) {
+    const name = `plasma-drift-${id}`;
+    // Check if already injected
+    if (document.getElementById(`keyframes-${name}`)) {
+        document.getElementById(`keyframes-${name}`).remove();
+    }
+    const style = document.createElement('style');
+    style.id = `keyframes-${name}`;
+    style.textContent = `
+        @keyframes ${name} {
+            0%, 100% { transform: translate(-50%, -50%) translate(0, 0) scale(1); }
+            33% { transform: translate(-50%, -50%) translate(${dx1}%, ${dy1}%) scale(${s1}); }
+            66% { transform: translate(-50%, -50%) translate(${dx2}%, ${dy2}%) scale(${s2}); }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function getColorsForDate(month, day) {
-    // Month: 1-19 (or 0 for Ayyam-i-Ha, handle later)
-    // Day: 1-19
-
-    // For now, use month for colorA, day for colorB
     const monthIndex = (month - 1) % 19;
     const dayIndex = (day - 1) % 19;
 
@@ -169,12 +124,11 @@ export function initPlasmaBackground(badiDate) {
     const seed = (colorA + colorB).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
     const pseudoRandom = (i) => ((seed * (i + 1) * 9301 + 49297) % 233280) / 233280;
 
-    const { blobCount, blobSize, blur, speed, morph, baseOpacity } = PLASMA_PARAMS;
+    const { blobCount, blobSize, blur, speed, baseOpacity } = PLASMA_PARAMS;
 
     for (let i = 0; i < blobCount; i++) {
         const useA = i % 3 === 0;
         const useB = i % 3 === 1;
-        const useMid = i % 3 === 2;
 
         const config = {
             color: useA ? colorA : useB ? colorB : midColor,
@@ -184,41 +138,23 @@ export function initPlasmaBackground(badiDate) {
             duration: speed + pseudoRandom(i * 4) * speed,
             delay: pseudoRandom(i * 5) * 2,
             opacity: baseOpacity + pseudoRandom(i * 6) * 0.2,
-            blur: blur,
-            morph: morph
+            blur: blur
         };
 
-        const blob = createAnimatedBlob(config, `blob-${i}`);
+        // Inject unique keyframes for each blob with pseudo-random drift
+        const dx1 = (pseudoRandom(i * 7) - 0.5) * 20;
+        const dy1 = (pseudoRandom(i * 8) - 0.5) * 20;
+        const s1 = 0.9 + pseudoRandom(i * 9) * 0.2;
+        const dx2 = (pseudoRandom(i * 10) - 0.5) * 20;
+        const dy2 = (pseudoRandom(i * 11) - 0.5) * 20;
+        const s2 = 0.9 + pseudoRandom(i * 12) * 0.2;
+        injectKeyframes(i, dx1, dy1, s1, dx2, dy2, s2);
+
+        const blob = createAnimatedBlob(config, i);
         container.appendChild(blob);
     }
 
-    // Add ambient background blobs
-    const ambient1 = document.createElement('div');
-    ambient1.className = 'plasma-ambient';
-    ambient1.style.cssText = `
-        position: absolute;
-        inset: -20%;
-        background: radial-gradient(ellipse 60% 50% at 30% 70%, ${colorA}66 0%, transparent 60%);
-        filter: blur(${blur * 1.5}px);
-        mix-blend-mode: screen;
-        pointer-events: none;
-    `;
-    container.appendChild(ambient1);
-
-    const ambient2 = document.createElement('div');
-    ambient2.className = 'plasma-ambient';
-    ambient2.style.cssText = `
-        position: absolute;
-        inset: -20%;
-        background: radial-gradient(ellipse 50% 60% at 70% 30%, ${colorB}66 0%, transparent 60%);
-        filter: blur(${blur * 1.5}px);
-        mix-blend-mode: screen;
-        pointer-events: none;
-    `;
-    container.appendChild(ambient2);
-
     // Trigger fade-in after all elements are added
-    // Use setTimeout to ensure elements are rendered first
     setTimeout(() => {
         container.classList.add('loaded');
     }, 50);

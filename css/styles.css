@@ -118,9 +118,9 @@ body {
 /* Plasma Background Container */
 #plasma-background {
     position: fixed;
-    inset: -20%;
+    inset: 0;
     z-index: 0;
-    overflow: visible;
+    overflow: hidden;
     pointer-events: none;
     opacity: 0;
     transition: opacity 1.2s ease-in-out;
@@ -131,11 +131,13 @@ body {
 }
 
 .plasma-blob {
-    will-change: transform, opacity;
+    will-change: transform;
 }
 
-.plasma-ambient {
-    will-change: filter;
+@media (prefers-reduced-motion: reduce) {
+    .plasma-blob {
+        animation: none !important;
+    }
 }
 
 /* Layout */
@@ -609,15 +611,24 @@ body {
     color: var(--color-text);
 }
 
-/* Sunset Section */
+/* Sun Times Row */
+.sun-times-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: var(--gap-section);
+}
+
+/* Sunrise & Sunset Sections */
+.sunrise-section,
 .sunset-section {
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: var(--gap-label-value);
-    margin-bottom: var(--gap-section);
 }
 
+.sunrise-label,
 .sunset-label {
     font-family: var(--property-font);
     font-weight: var(--property-font-weight);
@@ -627,6 +638,7 @@ body {
     color: var(--color-text-muted);
 }
 
+.sunrise-time,
 .sunset-time {
     font-family: var(--value-font);
     font-size: var(--font-value);
