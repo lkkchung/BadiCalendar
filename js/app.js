@@ -1,6 +1,6 @@
 // Badí' Calendar Application
 import { getCurrentBadiDate, getCurrentDayInPeriod } from './badiDate.js';
-import { getNextSunset, getSunset, formatTime } from './suncalc.js';
+import { getNextSunset, getSunset, getSunrise, formatTime } from './suncalc.js';
 import { initPlasmaBackground, updatePlasmaColors } from './plasma-background.js';
 
 /**
@@ -636,12 +636,16 @@ const Sunset = {
     // Current sunset time
     nextSunset: null,
 
+    // Current sunrise time
+    nextSunrise: null,
+
     // Current location (cached for recalculation)
     currentLocation: null,
 
     // DOM elements
     elements: {
-        sunsetTime: null
+        sunsetTime: null,
+        sunriseTime: null
     },
 
     /**
@@ -649,6 +653,7 @@ const Sunset = {
      */
     init() {
         this.elements.sunsetTime = document.getElementById('sunset-time');
+        this.elements.sunriseTime = document.getElementById('sunrise-time');
 
         // Listen for location changes
         window.addEventListener('locationChanged', (e) => {
@@ -695,6 +700,7 @@ const Sunset = {
         }
 
         this.nextSunset = getNextSunset(location.latitude, location.longitude, DebugTime.now());
+        this.nextSunrise = getSunrise(DebugTime.now(), location.latitude, location.longitude);
         this.updateDisplay();
 
         // Dispatch event for countdown timer
@@ -707,12 +713,13 @@ const Sunset = {
      * Update the sunset time display
      */
     updateDisplay() {
-        if (!this.elements.sunsetTime) return;
-
-        if (this.nextSunset) {
-            this.elements.sunsetTime.textContent = formatTime(this.nextSunset);
-        } else {
-            this.elements.sunsetTime.textContent = '--:--';
+        if (this.elements.sunsetTime) {
+            this.elements.sunsetTime.textContent = this.nextSunset
+                ? formatTime(this.nextSunset) : '--:--';
+        }
+        if (this.elements.sunriseTime) {
+            this.elements.sunriseTime.textContent = this.nextSunrise
+                ? formatTime(this.nextSunrise) : '--:--';
         }
     },
 
