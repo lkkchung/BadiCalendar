@@ -35,9 +35,9 @@
 
     /* Spacing - explicit gaps matching design */
     --gap-label-value: calc(4px * var(--scale-multiplier));
-    --gap-small: calc(12px * var(--scale-multiplier));
+    --gap-small: calc(8px * var(--scale-multiplier));
     --gap-section: calc(16px * var(--scale-multiplier));
-    --gap-large: calc(24px * var(--scale-multiplier));
+    --gap-large: calc(14px * var(--scale-multiplier));
     --gap-value-dots: calc(8px * var(--scale-multiplier));
 
     /* Day counter dimensions */
@@ -175,7 +175,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100svh;
-    padding-top: calc(80px * var(--scale-multiplier));
+    padding-top: calc(30px * var(--scale-multiplier));
     padding-bottom: calc(20px * var(--scale-multiplier));
     scroll-snap-align: start;
 }
@@ -840,7 +840,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: calc(60px * var(--scale-multiplier)) var(--container-padding);
+    padding: calc(40px * var(--scale-multiplier)) var(--container-padding);
     scroll-snap-align: start;
 }
 
