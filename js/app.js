@@ -359,7 +359,7 @@ const Geolocation = {
     /**
      * Handle manual location submission from fallback input
      */
-    handleManualLocationSubmit() {
+    async handleManualLocationSubmit() {
         const input = this.elements.locationInput.value.trim();
         if (!input) return;
 
@@ -374,15 +374,54 @@ const Geolocation = {
             }
         }
 
-        // Look up city in predefined list
+        // Look up city in predefined list (fast, offline)
         const cityLocation = this.lookupCity(input);
         if (cityLocation) {
             this.setManualLocation(cityLocation.lat, cityLocation.lng, cityLocation.name);
             return;
         }
 
+        // Fall back to geocoding API
+        this.elements.locationText.textContent = `Searching for "${input}"...`;
+        const geocoded = await this.geocodeCity(input);
+        if (geocoded) {
+            this.setManualLocation(geocoded.lat, geocoded.lng, geocoded.name);
+            return;
+        }
+
         // City not found - show error
         this.elements.locationText.textContent = `City "${input}" not found. Try coordinates (lat, lng).`;
+    },
+
+    /**
+     * Geocode a city name using OpenStreetMap Nominatim API
+     * @param {string} query
+     * @returns {Promise<{lat: number, lng: number, name: string}|null>}
+     */
+    async geocodeCity(query) {
+        try {
+            const url = `https://nominatim.openstreetmap.org/search?` +
+                `q=${encodeURIComponent(query)}&format=json&limit=1&addressdetails=1`;
+            const response = await fetch(url, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) return null;
+
+            const results = await response.json();
+            if (!results.length) return null;
+
+            const result = results[0];
+            const lat = parseFloat(result.lat);
+            const lng = parseFloat(result.lon);
+            const addr = result.address || {};
+            const city = addr.city || addr.town || addr.village || result.name || query;
+            const country = addr.country || '';
+            const name = country ? `${city}, ${country}` : city;
+
+            return { lat, lng, name };
+        } catch {
+            return null;
+        }
     },
 
     /**
