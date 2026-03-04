@@ -9,3 +9,6 @@ nul
 
 # Beads local database (broken on Windows currently)
 .beads/
+
+#screenshots for communicating with claude code
+.screenshots/
