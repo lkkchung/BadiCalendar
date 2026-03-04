@@ -46,7 +46,14 @@
       "Bash(git pull:*)",
       "WebFetch(domain:www.figma.com)",
       "Bash(cmd:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(file:*)",
+      "Bash(npx sharp-cli:*)",
+      "Bash(python:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(pdftotext:*)",
+      "Bash(pip install:*)"
     ]
   }
 }

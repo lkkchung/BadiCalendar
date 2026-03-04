@@ -56,6 +56,62 @@ const NAW_RUZ_DATA = {
     221: { month: 3, day: 20, ayyamIHaDays: 4 },
 };
 
+// Twin Holy Birthdays lookup table: Bahá'í year → { babMonth, babDay, bahMonth, bahDay }
+// Birth of the Báb (first day) and Birth of Bahá'u'lláh (second day)
+// Data source: Bahá'í World Centre 50-year calendar (years 172-221 B.E.)
+const TWIN_BIRTHDAYS = {
+    172: { babMonth: 13, babDay: 10, bahMonth: 13, bahDay: 11 },
+    173: { babMonth: 12, babDay: 18, bahMonth: 12, bahDay: 19 },
+    174: { babMonth: 12, babDay: 7,  bahMonth: 12, bahDay: 8 },
+    175: { babMonth: 13, babDay: 6,  bahMonth: 13, bahDay: 7 },
+    176: { babMonth: 12, babDay: 14, bahMonth: 12, bahDay: 15 },
+    177: { babMonth: 12, babDay: 4,  bahMonth: 12, bahDay: 5 },
+    178: { babMonth: 13, babDay: 4,  bahMonth: 13, bahDay: 5 },
+    179: { babMonth: 12, babDay: 11, bahMonth: 12, bahDay: 12 },
+    180: { babMonth: 12, babDay: 1,  bahMonth: 12, bahDay: 2 },
+    181: { babMonth: 12, babDay: 19, bahMonth: 13, bahDay: 1 },
+    182: { babMonth: 12, babDay: 8,  bahMonth: 12, bahDay: 9 },
+    183: { babMonth: 13, babDay: 7,  bahMonth: 13, bahDay: 8 },
+    184: { babMonth: 12, babDay: 15, bahMonth: 12, bahDay: 16 },
+    185: { babMonth: 12, babDay: 5,  bahMonth: 12, bahDay: 6 },
+    186: { babMonth: 13, babDay: 5,  bahMonth: 13, bahDay: 6 },
+    187: { babMonth: 12, babDay: 14, bahMonth: 12, bahDay: 15 },
+    188: { babMonth: 12, babDay: 2,  bahMonth: 12, bahDay: 3 },
+    189: { babMonth: 13, babDay: 2,  bahMonth: 13, bahDay: 3 },
+    190: { babMonth: 12, babDay: 10, bahMonth: 12, bahDay: 11 },
+    191: { babMonth: 13, babDay: 10, bahMonth: 13, bahDay: 11 },
+    192: { babMonth: 12, babDay: 17, bahMonth: 12, bahDay: 18 },
+    193: { babMonth: 12, babDay: 6,  bahMonth: 12, bahDay: 7 },
+    194: { babMonth: 13, babDay: 6,  bahMonth: 13, bahDay: 7 },
+    195: { babMonth: 12, babDay: 15, bahMonth: 12, bahDay: 16 },
+    196: { babMonth: 12, babDay: 4,  bahMonth: 12, bahDay: 5 },
+    197: { babMonth: 13, babDay: 4,  bahMonth: 13, bahDay: 5 },
+    198: { babMonth: 12, babDay: 12, bahMonth: 12, bahDay: 13 },
+    199: { babMonth: 12, babDay: 1,  bahMonth: 12, bahDay: 2 },
+    200: { babMonth: 12, babDay: 19, bahMonth: 13, bahDay: 1 },
+    201: { babMonth: 12, babDay: 8,  bahMonth: 12, bahDay: 9 },
+    202: { babMonth: 13, babDay: 8,  bahMonth: 13, bahDay: 9 },
+    203: { babMonth: 12, babDay: 16, bahMonth: 12, bahDay: 17 },
+    204: { babMonth: 12, babDay: 5,  bahMonth: 12, bahDay: 6 },
+    205: { babMonth: 13, babDay: 5,  bahMonth: 13, bahDay: 6 },
+    206: { babMonth: 12, babDay: 14, bahMonth: 12, bahDay: 15 },
+    207: { babMonth: 12, babDay: 3,  bahMonth: 12, bahDay: 4 },
+    208: { babMonth: 13, babDay: 2,  bahMonth: 13, bahDay: 3 },
+    209: { babMonth: 12, babDay: 10, bahMonth: 12, bahDay: 11 },
+    210: { babMonth: 13, babDay: 9,  bahMonth: 13, bahDay: 10 },
+    211: { babMonth: 12, babDay: 18, bahMonth: 12, bahDay: 19 },
+    212: { babMonth: 12, babDay: 6,  bahMonth: 12, bahDay: 7 },
+    213: { babMonth: 13, babDay: 6,  bahMonth: 13, bahDay: 7 },
+    214: { babMonth: 12, babDay: 15, bahMonth: 12, bahDay: 16 },
+    215: { babMonth: 12, babDay: 4,  bahMonth: 12, bahDay: 5 },
+    216: { babMonth: 13, babDay: 4,  bahMonth: 13, bahDay: 5 },
+    217: { babMonth: 12, babDay: 11, bahMonth: 12, bahDay: 12 },
+    218: { babMonth: 11, babDay: 19, bahMonth: 12, bahDay: 1 },
+    219: { babMonth: 12, babDay: 19, bahMonth: 13, bahDay: 1 },
+    220: { babMonth: 12, babDay: 9,  bahMonth: 12, bahDay: 10 },
+    221: { babMonth: 13, babDay: 8,  bahMonth: 13, bahDay: 9 },
+};
+
 // 19 months of the Bahá'í calendar
 const MONTHS = [
     { arabic: "Bahá", english: "Splendour" },
@@ -153,22 +209,9 @@ const HOLY_DAYS = [
         description: "July 9, 1850",
         workSuspended: true
     },
-    {
-        month: 11,
-        day: 1,
-        english: "Birth of the Báb",
-        arabic: "مولد الباب",
-        description: "October 20, 1819",
-        workSuspended: true
-    },
-    {
-        month: 11,
-        day: 2,
-        english: "Birth of Bahá'u'lláh",
-        arabic: "مولد بهاء الله",
-        description: "November 12, 1817",
-        workSuspended: true
-    },
+    // Twin Holy Birthdays (Birth of the Báb & Birth of Bahá'u'lláh)
+    // are year-specific — looked up dynamically via TWIN_BIRTHDAYS table
+
     // Commemorative holy days
     {
         month: 14,
@@ -192,10 +235,28 @@ const HOLY_DAYS = [
  * Check if a given Badí' date is a holy day
  * @param {number} month - Badí' month (1-19, or 0 for Ayyám-i-Há)
  * @param {number} day - Day of the month (1-19)
+ * @param {number} [year] - Bahá'í year (needed for Twin Holy Birthdays)
  * @returns {Object|null} - Holy day object or null
  */
-function getHolyDay(month, day) {
-    return HOLY_DAYS.find(hd => hd.month === month && hd.day === day) || null;
+function getHolyDay(month, day, year) {
+    // Check fixed holy days first
+    const fixed = HOLY_DAYS.find(hd => hd.month === month && hd.day === day);
+    if (fixed) return fixed;
+
+    // Check Twin Holy Birthdays (year-specific)
+    if (year) {
+        const twins = TWIN_BIRTHDAYS[year];
+        if (twins) {
+            if (month === twins.babMonth && day === twins.babDay) {
+                return { month, day, english: "Birth of the Báb", arabic: "مولد الباب", description: "October 20, 1819", workSuspended: true };
+            }
+            if (month === twins.bahMonth && day === twins.bahDay) {
+                return { month, day, english: "Birth of Bahá'u'lláh", arabic: "مولد بهاء الله", description: "November 12, 1817", workSuspended: true };
+            }
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -258,10 +319,9 @@ function findBadiYear(date) {
  * @returns {number} - Number of days (date2 - date1)
  */
 function daysBetween(date1, date2) {
-    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
-    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
-    const diffTime = d2 - d1;
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const d1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
 }
 
 /**
@@ -305,7 +365,7 @@ function gregorianToBadi(gregorianDate) {
     const badiWeekday = jsWeekday === 0 ? 1 : (jsWeekday === 6 ? 0 : jsWeekday + 1);
 
     // Check if this date is a holy day
-    const holyDay = getHolyDay(month, day);
+    const holyDay = getHolyDay(month, day, badiYear);
 
     return {
         year: badiYear,
@@ -395,6 +455,7 @@ export {
     WEEKDAYS,
     AYYAM_I_HA,
     NAW_RUZ_DATA,
+    TWIN_BIRTHDAYS,
     HOLY_DAYS,
     gregorianToBadi,
     formatBadiDate,

@@ -672,6 +672,13 @@ const Sunset = {
             this.currentLocation = location;
             this.updateSunset(location);
         }
+
+        // Check every second if sunset has passed
+        setInterval(() => {
+            if (this.nextSunset && DebugTime.now() > this.nextSunset) {
+                window.dispatchEvent(new CustomEvent('sunsetPassed'));
+            }
+        }, 1000);
     },
 
     /**
@@ -1338,7 +1345,15 @@ function init() {
     // Listen for Bahá'í day change (at sunset)
     window.addEventListener('badiDayChanged', () => {
         updateBadiDateDisplay();
+        updateGregorianDateDisplay();
         DayCountdown.update();
+    });
+
+    // Recalculate Bahá'í date when sunset data first becomes available
+    window.addEventListener('sunsetUpdated', () => {
+        updateBadiDateDisplay();
+        MonthDots.render();
+        DayDots.render();
     });
 
     // Listen for language preference changes
