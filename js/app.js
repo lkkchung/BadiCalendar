@@ -1356,6 +1356,23 @@ function init() {
             DayCountdown.update();
         }, 100); // Debounce: wait 100ms after resize stops
     });
+
+    // Hide scroll hint when user scrolls down
+    const scrollHint = document.getElementById('scroll-hint');
+    const appContainer = document.querySelector('.app-container');
+    if (scrollHint && appContainer) {
+        appContainer.addEventListener('scroll', () => {
+            scrollHint.classList.toggle('hidden', appContainer.scrollTop > 40);
+        }, { passive: true });
+    }
+
+    // Scroll back to calendar when back hint is clicked
+    const scrollHintBack = document.getElementById('scroll-hint-back');
+    if (scrollHintBack && appContainer) {
+        scrollHintBack.addEventListener('click', () => {
+            appContainer.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 }
 
 // Initialize plasma background as early as possible (DOM ready)
