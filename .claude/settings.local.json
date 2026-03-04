@@ -43,7 +43,10 @@
       "Bash(tasklist:*)",
       "Bash(taskkill:*)",
       "Bash(start:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "WebFetch(domain:www.figma.com)",
+      "Bash(cmd:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }
