@@ -1,7 +1,6 @@
-const CACHE_NAME = 'badi-calendar-v1';
+const CACHE_NAME = 'badi-calendar-v2';
 
 const PRECACHE_ASSETS = [
-    './',
     './index.html',
     './css/styles.css',
     './js/app.js',
@@ -9,6 +8,7 @@ const PRECACHE_ASSETS = [
     './js/suncalc.js',
     './js/plasma-background.js',
     './manifest.json',
+    './fonts/montserrat-latin.woff2',
     './icons/icon-192.png',
     './icons/icon-512.png'
 ];
@@ -18,6 +18,8 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(PRECACHE_ASSETS);
+        }).catch((err) => {
+            console.error('SW precache failed:', err);
         })
     );
     self.skipWaiting();
