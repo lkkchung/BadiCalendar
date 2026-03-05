@@ -1,4 +1,4 @@
-const CACHE_NAME = 'badi-calendar-v2';
+const CACHE_NAME = 'badi-calendar-v3';
 
 const PRECACHE_ASSETS = [
     './index.html',
@@ -62,17 +62,16 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Cache-first for static assets
+    // Stale-while-revalidate for static assets
+    // Serve cached version immediately, then update cache in background
     event.respondWith(
         caches.match(event.request).then((cached) => {
-            if (cached) {
-                return cached;
-            }
-            return fetch(event.request).then((response) => {
+            const fetchPromise = fetch(event.request).then((response) => {
                 const clone = response.clone();
                 caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                 return response;
             });
+            return cached || fetchPromise;
         })
     );
 });
