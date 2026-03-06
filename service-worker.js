@@ -1,4 +1,4 @@
-const CACHE_NAME = 'badi-calendar-v3';
+const CACHE_NAME = 'badi-calendar-v4';
 
 const PRECACHE_ASSETS = [
     './index.html',
