@@ -281,6 +281,27 @@ function getNextSunset(latitude, longitude, fromDate = new Date()) {
 }
 
 /**
+ * Get the next sunrise from the current time
+ * @param {number} latitude - Latitude in degrees
+ * @param {number} longitude - Longitude in degrees
+ * @param {Date} [fromDate] - Starting date/time (defaults to now)
+ * @returns {Date|null} Next sunrise time
+ */
+function getNextSunrise(latitude, longitude, fromDate = new Date()) {
+    // Try today's sunrise
+    let sunrise = getSunrise(fromDate, latitude, longitude);
+
+    if (sunrise && sunrise > fromDate) {
+        return sunrise;
+    }
+
+    // Today's sunrise has passed, get tomorrow's
+    const tomorrow = new Date(fromDate);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return getSunrise(tomorrow, latitude, longitude);
+}
+
+/**
  * Format time as HH:MM
  * @param {Date} date
  * @returns {string}
@@ -317,6 +338,7 @@ export {
     getSunset,
     getSunrise,
     getNextSunset,
+    getNextSunrise,
     formatTime,
     getTimeRemaining
 };

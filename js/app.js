@@ -1,6 +1,6 @@
 // Badí' Calendar Application
 import { getCurrentBadiDate, getCurrentDayInPeriod } from './badiDate.js';
-import { getNextSunset, getSunset, getSunrise, formatTime } from './suncalc.js';
+import { getNextSunset, getNextSunrise, getSunset, getSunrise, formatTime } from './suncalc.js';
 import { initPlasmaBackground, updatePlasmaColors } from './plasma-background.js';
 
 /**
@@ -746,7 +746,7 @@ const Sunset = {
         }
 
         this.nextSunset = getNextSunset(location.latitude, location.longitude, DebugTime.now());
-        this.nextSunrise = getSunrise(DebugTime.now(), location.latitude, location.longitude);
+        this.nextSunrise = getNextSunrise(location.latitude, location.longitude, DebugTime.now());
         this.updateDisplay();
 
         // Dispatch event for countdown timer
