@@ -1420,6 +1420,18 @@ function init() {
         }, { passive: true });
     }
 
+    // Hide language toggle when about section is visible
+    const aboutSection = document.querySelector('.about-section');
+    const langToggle = document.getElementById('language-toggle-btn');
+    if (aboutSection && langToggle) {
+        const observer = new IntersectionObserver((entries) => {
+            const visible = entries[0].isIntersecting;
+            langToggle.style.opacity = visible ? '0' : '';
+            langToggle.style.pointerEvents = visible ? 'none' : '';
+        }, { threshold: 0.1 });
+        observer.observe(aboutSection);
+    }
+
     // Scroll back to calendar when back hint is clicked
     const scrollHintBack = document.getElementById('scroll-hint-back');
     if (scrollHintBack && appContainer) {
