@@ -851,7 +851,8 @@ body {
     position: absolute;
     bottom: 1rem;
     left: 1.5rem;
-    font-size: var(--font-size-small);
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 0.65rem;
     color: var(--color-text-muted);
     opacity: 0.5;
 }
