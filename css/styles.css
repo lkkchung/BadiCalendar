@@ -216,48 +216,6 @@ body {
 }
 
 /* Holy Day Section */
-.holy-day-section {
-    background: linear-gradient(135deg, #f8f4e6 0%, #fff9e6 100%);
-    padding: 1rem 1.5rem;
-    text-align: center;
-    border: 2px solid #d4af37;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
-}
-
-.holy-day-badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.holy-day-icon {
-    font-size: 1.25rem;
-    color: #d4af37;
-}
-
-.holy-day-text {
-    font-size: var(--font-size-heading);
-    font-weight: bold;
-    color: var(--color-primary);
-}
-
-.holy-day-description {
-    font-size: var(--font-size-small);
-    color: var(--color-text-muted);
-    margin-bottom: 0.25rem;
-}
-
-.holy-day-type {
-    font-size: var(--font-size-small);
-    color: #d4af37;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
 /* Time Section */
 .time-section {
     text-align: center;
@@ -835,6 +793,7 @@ body {
 
 /* About Section */
 .about-section {
+    position: relative;
     min-height: 100svh;
     display: flex;
     flex-direction: column;
@@ -886,6 +845,15 @@ body {
 
 .about-links a:hover {
     opacity: 1;
+}
+
+.about-version {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.5rem;
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    opacity: 0.5;
 }
 
 /* Utility */

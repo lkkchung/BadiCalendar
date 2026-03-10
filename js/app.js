@@ -1232,13 +1232,22 @@ function updateBadiDateDisplay() {
     const monthEl = document.getElementById('month');
     const yearEl = document.getElementById('year');
 
+    const weekdayLabelEl = document.querySelector('.weekday-label');
     if (weekdayEl) {
-        weekdayEl.textContent = isEnglish
-            ? badiDate.weekdayName.english
-            : badiDate.weekdayName.arabic;
-        weekdayEl.title = isEnglish
-            ? badiDate.weekdayName.arabic
-            : badiDate.weekdayName.english;
+        if (badiDate.holyDay) {
+            // On holy days, replace weekday with holy day info
+            if (weekdayLabelEl) weekdayLabelEl.textContent = 'HOLY DAY';
+            weekdayEl.textContent = badiDate.holyDay.english;
+            weekdayEl.title = badiDate.holyDay.description;
+        } else {
+            if (weekdayLabelEl) weekdayLabelEl.textContent = 'WEEKDAY';
+            weekdayEl.textContent = isEnglish
+                ? badiDate.weekdayName.english
+                : badiDate.weekdayName.arabic;
+            weekdayEl.title = isEnglish
+                ? badiDate.weekdayName.arabic
+                : badiDate.weekdayName.english;
+        }
     }
 
     if (dayEl) {
@@ -1268,38 +1277,7 @@ function updateBadiDateDisplay() {
         yearEl.textContent = `${badiDate.year} B.E.`;
     }
 
-    // Update holy day display
-    const holyDaySection = document.getElementById('holy-day-section');
-    const holyDayText = document.getElementById('holy-day-text');
-    const holyDayDescription = document.getElementById('holy-day-description');
-    const holyDayType = document.getElementById('holy-day-type');
-
-    if (badiDate.holyDay) {
-        // Show holy day section
-        if (holyDaySection) holyDaySection.hidden = false;
-
-        // Display holy day name based on language preference
-        if (holyDayText) {
-            holyDayText.textContent = isEnglish
-                ? badiDate.holyDay.english
-                : badiDate.holyDay.arabic;
-        }
-
-        // Display description
-        if (holyDayDescription) {
-            holyDayDescription.textContent = badiDate.holyDay.description;
-        }
-
-        // Display type (work-suspended or commemorative)
-        if (holyDayType) {
-            holyDayType.textContent = badiDate.holyDay.workSuspended
-                ? 'Work Suspended'
-                : 'Commemorative Holy Day';
-        }
-    } else {
-        // Hide holy day section
-        if (holyDaySection) holyDaySection.hidden = true;
-    }
+    // Holy day display is handled in the weekday section above
 
     // Update month and day dots
     MonthDots.render();

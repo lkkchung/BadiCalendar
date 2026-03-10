@@ -157,56 +157,49 @@ const HOLY_DAYS = [
         month: 1,
         day: 1,
         english: "Naw-Rúz",
-        arabic: "نوروز",
-        description: "Bahá'í New Year",
+        description: "1 Bahá",
         workSuspended: true
     },
     {
         month: 2,
         day: 13,
         english: "First Day of Riḍván",
-        arabic: "أول أيام الرضوان",
-        description: "Declaration of Bahá'u'lláh",
+        description: "13 Jalál",
         workSuspended: true
     },
     {
         month: 3,
         day: 2,
         english: "Ninth Day of Riḍván",
-        arabic: "اليوم التاسع من الرضوان",
-        description: "Ninth Day of Festival",
+        description: "2 Jamál",
         workSuspended: true
     },
     {
         month: 3,
         day: 5,
         english: "Twelfth Day of Riḍván",
-        arabic: "اليوم الثاني عشر من الرضوان",
-        description: "Last Day of Festival",
+        description: "5 Jamál",
         workSuspended: true
     },
     {
         month: 4,
         day: 8,
         english: "Declaration of the Báb",
-        arabic: "إعلان الباب",
-        description: "May 23, 1844",
+        description: "8 `Aẓamat",
         workSuspended: true
     },
     {
         month: 4,
         day: 13,
         english: "Ascension of Bahá'u'lláh",
-        arabic: "صعود بهاء الله",
-        description: "May 29, 1892",
+        description: "13 `Aẓamat",
         workSuspended: true
     },
     {
         month: 6,
         day: 17,
         english: "Martyrdom of the Báb",
-        arabic: "استشهاد الباب",
-        description: "July 9, 1850",
+        description: "17 Raḥmat",
         workSuspended: true
     },
     // Twin Holy Birthdays (Birth of the Báb & Birth of Bahá'u'lláh)
@@ -217,16 +210,14 @@ const HOLY_DAYS = [
         month: 14,
         day: 4,
         english: "Day of the Covenant",
-        arabic: "يوم الميثاق",
-        description: "Commemorating 'Abdu'l-Bahá",
+        description: "4 Qawl",
         workSuspended: false
     },
     {
         month: 14,
         day: 6,
         english: "Ascension of 'Abdu'l-Bahá",
-        arabic: "صعود عبد البهاء",
-        description: "November 28, 1921",
+        description: "6 Qawl",
         workSuspended: false
     }
 ];
@@ -248,10 +239,10 @@ function getHolyDay(month, day, year) {
         const twins = TWIN_BIRTHDAYS[year];
         if (twins) {
             if (month === twins.babMonth && day === twins.babDay) {
-                return { month, day, english: "Birth of the Báb", arabic: "مولد الباب", description: "October 20, 1819", workSuspended: true };
+                return { month, day, english: "Birth of the Báb", description: `${day} ${MONTHS[month - 1].arabic}`, workSuspended: true };
             }
             if (month === twins.bahMonth && day === twins.bahDay) {
-                return { month, day, english: "Birth of Bahá'u'lláh", arabic: "مولد بهاء الله", description: "November 12, 1817", workSuspended: true };
+                return { month, day, english: "Birth of Bahá'u'lláh", description: `${day} ${MONTHS[month - 1].arabic}`, workSuspended: true };
             }
         }
     }
